@@ -45,6 +45,7 @@ export default function AuthPage() {
             return;
           }
           localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.role);
 
           console.log("🛠 Role:", data.role);
           if (data.role === "admin") {

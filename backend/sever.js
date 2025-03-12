@@ -6,6 +6,9 @@ import cors from "cors";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import adminRoutes from "./routes/admin.js";
+import imageRoutes from "./routes/images.js";
+app.use("/api/images", imageRoutes);
+
 
 const app = express();
 

@@ -5,7 +5,7 @@ import User from "@backend/models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const jwtSecret = process.env.JWT_SECRET || "defaultsecret"; // Đảm bảo có giá trị fallback nếu thiếu env
+const jwtSecret = process.env.JWT_SECRET || "defaultsecret";
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,21 +27,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Mật khẩu không đúng!" }, { status: 400 });
     }
 
-    console.log("🔍 JWT_SECRET:", process.env.JWT_SECRET ? "OK" : "MISSING");
     if (!process.env.JWT_SECRET) {
       console.error("❌ LỖI: Biến môi trường JWT_SECRET chưa được thiết lập!");
       return NextResponse.json({ message: "Lỗi server! (JWT_SECRET missing)" }, { status: 500 });
     }
+
     console.log("🔓 Tạo token đăng nhập...");
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
-      jwtSecret, // Sử dụng biến đã khai báo
+      { userId: user._id, role: user.role }, 
+      jwtSecret, 
       { expiresIn: "7d" }
     );
 
     console.log("✅ Đăng nhập thành công!");
     return NextResponse.json(
-      { message: "Đăng nhập thành công!", token, role: user.role },
+      { message: "Đăng nhập thành công!", token, role: user.role }, 
       { status: 200 }
     );
   } catch (error) {

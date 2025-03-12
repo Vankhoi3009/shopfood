@@ -5,13 +5,26 @@ import bcrypt from "bcryptjs";
 
 dotenv.config();
 
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/";
+
 const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    console.log("✅ MongoDB already connected!");
+    return mongoose.connection.db;
+  }
+
   try {
-    await mongoose.connect("mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/", {
+    await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     console.log("✅ MongoDB Connected Successfully!");
+
+    const db = mongoose.connection.db;
+    if (!db) {
+      console.error("❌ Database connection failed.");
+      return null;
+    }
 
     // Kiểm tra và tạo tài khoản admin mặc định nếu chưa tồn tại
     const adminEmail = "admin@shopfood.com";
@@ -32,6 +45,8 @@ const connectDB = async () => {
     } else {
       console.log("🔹 Admin mặc định đã tồn tại!");
     }
+
+    return db;
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error);
     process.exit(1);
