@@ -4,11 +4,17 @@ import mongoose from "mongoose";
 
 export const GET = async () => {
   try {
-    await connectDB(); // Đảm bảo đã kết nối DB
+    await connectDB();
 
-    console.log("📌 MongoDB ReadyState:", mongoose.connection.readyState);
+    if (mongoose.connection.readyState !== 1) {
+      return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
+    }
 
-    const db = mongoose.connection.useDb("test");
+    const db = mongoose.connection.db;
+    if (!db) {
+      return NextResponse.json({ error: "Database not found" }, { status: 500 });
+    }
+
     const files = await db.collection("uploads.files").find().toArray();
 
     return NextResponse.json(files);

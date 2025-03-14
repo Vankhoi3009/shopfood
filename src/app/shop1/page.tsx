@@ -2,23 +2,38 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image"; // Dùng Next.js Image để tối ưu ảnh
 import Footer from "@/components/footer";
 import "@/styles/Shop1.css";
 import "@/styles/Base.css";
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
+// 🟢 Định nghĩa kiểu dữ liệu cho sản phẩm
+type Product = {
+  _id: string;
+  name: string;
+  image: string; // Đảm bảo API trả về đúng key này
+};
 
-  // Gọi API để lấy danh sách sản phẩm
+export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await fetch("/api/products");
         if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu");
-        const data = await res.json();
+        const data: Product[] = await res.json(); // 🟢 Cụ thể kiểu dữ liệu API
+
+        console.log("📌 Dữ liệu sản phẩm:", data); // Debug
+
         setProducts(data);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
+        setError("Không thể tải sản phẩm");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -66,15 +81,33 @@ export default function Home() {
 
           {/* Danh sách sản phẩm */}
           <section className="product-list" id="product-list">
-            {products.length === 0 ? (
+            {loading ? (
               <p>Đang tải sản phẩm...</p>
+            ) : error ? (
+              <p className="error-message">{error}</p>
+            ) : products.length === 0 ? (
+              <p>Không có sản phẩm nào.</p>
             ) : (
-              products.map((product) => (
-                <div key={product._id?.toString()} className="product">
-                  <img src={product.imageUrl} alt={product.name} />
-                  <h3>{product.name}</h3>
-                </div>
-              ))
+              products.map((product) => {
+                const imageUrl = product.image
+                  ? `/api/images/${product.image}`
+                  : "/images/default-product.jpg"; // Ảnh mặc định
+
+                return (
+                  <div key={product._id} className="product">
+                    {/* ✅ Sử dụng next/image để tối ưu ảnh */}
+                    <Image
+                      src={imageUrl}
+                      alt={product.name}
+                      width={300}
+                      height={300}
+                      loading="lazy"
+                      className="product-image"
+                    />
+                    <h3>{product.name}</h3>
+                  </div>
+                );
+              })
             )}
           </section>
         </div>

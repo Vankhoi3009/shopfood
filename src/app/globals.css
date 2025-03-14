@@ -60,3 +60,16 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+.btn-delete-product{
+  margin-top: 0px !important;
+  width: 55px;
+  padding: 10px;
+  background-color: #e5484d !important;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-admin-header{
+  display: none;
+}
