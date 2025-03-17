@@ -69,13 +69,14 @@ export default function Home() {
             <h3>Bộ lọc</h3>
             <div className="filter-group">
               <h4>Danh mục</h4>
-              <label><input type="checkbox" /> Bánh tráng</label>
-              <label><input type="checkbox" /> Xoài lắc</label>
-              <label><input type="checkbox" /> Gà rán</label>
+              <label className=" box-label-checkbox-product"><input className="box-input-checkbox-product" type="checkbox" /> Bánh tráng</label>
+              <label className=" box-label-checkbox-product"><input className="box-input-checkbox-product" type="checkbox" /> Xoài lắc</label>
+              <label className=" box-label-checkbox-product"><input className="box-input-checkbox-product" type="checkbox" /> Gà rán</label>
             </div>
             <div className="filter-group">
               <h4>Tìm kiếm</h4>
               <input type="text" placeholder="Nhập tên sản phẩm..." />
+              <button className="btn btn-search-sidebar-product">Tìm kiếm</button>
             </div>
           </aside>
 

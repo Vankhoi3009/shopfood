@@ -1,5 +1,6 @@
 "use client";
-
+// import Footertt from "@/components/footer";
+// import Headertt from "@/components/Header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -68,7 +69,7 @@ export default function AuthPage() {
   return (
     <div className="container">
       <h2>{isLogin ? "Đăng nhập" : "Đăng ký"}</h2>
-      <form onSubmit={handleSubmit}>
+      <form className="form-login" onSubmit={handleSubmit}>
         {!isLogin && (
           <input
             type="text"
@@ -94,8 +95,8 @@ export default function AuthPage() {
         />
         <button type="submit">{isLogin ? "Đăng nhập" : "Đăng ký"}</button>
       </form>
-      <p>
-        <button onClick={() => setIsLogin(!isLogin)}>
+      <p className=" box-btn-login">
+        <button className=" btn-login-login" onClick={() => setIsLogin(!isLogin)}>
           {isLogin ? "Chuyển sang Đăng ký" : "Chuyển sang Đăng nhập"}
         </button>
         {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}

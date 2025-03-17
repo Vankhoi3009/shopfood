@@ -1,17 +1,19 @@
+/* Reset và thiết lập chung */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     scroll-behavior: smooth;
-}
-body {
     font-family: Arial, sans-serif;
 }
-h2{
-    color: orange;
-    font-size: 32px;
-    font-weight: 800;
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
+
+/* Header */
 header {
     display: flex;
     justify-content: space-between;
@@ -19,48 +21,57 @@ header {
     background: #ff6347;
     padding: 15px 50px;
     color: white;
+    position: relative;
 }
+
 .logo a, .account-cart a {
     color: white;
     text-decoration: none;
     font-size: 20px;
     font-weight: bold;
 }
+
+nav {
+    position: relative;
+}
+
 nav ul {
     list-style: none;
     display: flex;
 }
+
 nav ul li {
     margin: 0 15px;
 }
+
 nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 18px;
 }
-section {
+
+/* Tiêu đề */
+h2 {
+    color: orange;
+    font-size: 32px;
+    font-weight: 800;
     text-align: center;
 }
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+
+/* Nội dung chính */
 .content {
     flex: 1;
+    text-align: center;
 }
+
+/* Footer */
 footer {
     background: #333;
     color: white;
     text-align: center;
     padding: 20px 0;
 }
+
 .footer-container {
     width: 90%;
     max-width: 1200px;
@@ -70,28 +81,64 @@ footer {
     justify-content: space-between;
     align-items: center;
 }
+
 .footer-container div {
     margin: 10px;
 }
+
 .footer-links a {
     color: white;
     text-decoration: none;
     margin: 0 10px;
 }
+
 .footer-links a:hover {
     text-decoration: underline;
 }
+
 .social-icons a {
     color: white;
     margin: 0 8px;
     font-size: 20px;
 }
+
 .social-icons a:hover {
     color: #ffcc00;
 }
+
+/* Responsive */
 @media (max-width: 768px) {
-    .footer-container {
+    header {
         flex-direction: column;
         text-align: center;
+        padding: 10px 20px;
+    }
+    
+    .menu-toggle {
+        display: block;
+        cursor: pointer;
+        font-size: 24px;
+        color: white;
+        padding: 10px;
+    }
+    
+    nav ul {
+        display: none;
+        flex-direction: column;
+        background: #ff6347;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+    }
+    
+    nav ul.active {
+        display: flex;
+    }
+    
+    nav ul li {
+        margin: 10px 0;
     }
 }

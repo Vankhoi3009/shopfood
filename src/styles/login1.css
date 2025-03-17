@@ -219,3 +219,9 @@ button:active
 {
     text-decoration: underline;
 }
+.form-login{
+    width: 60% !important;
+}
+.box-btn-login{
+    width: 60% !important;    
+}
