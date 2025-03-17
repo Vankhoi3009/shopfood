@@ -58,7 +58,7 @@ export default function ProductList() {
               {/* Chỉ hiển thị nút xóa nếu là admin */}
               {isAdmin && (
                 <button
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+                  className="bg-red-500 btn-delete-product text-white px-3 py-1 rounded hover:bg-red-700"
                   onClick={() => handleDelete(product._id)}
                 >
                   Xóa
