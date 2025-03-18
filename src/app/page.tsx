@@ -5,6 +5,7 @@ import Link from "next/link";
 import BannerSlider from "@/components/home";
 import ContactForm from "@/components/contactform";
 import Footer from "@/components/footer";
+import Header from "@/components/Header";
 import ShareMoments from "@/components/imageforme";
 import "@/styles/Home.css";
 import "@/styles/Base.css";
@@ -40,44 +41,8 @@ export default function Home() {
 
   return (
     <main>
-      <header>
-        <div className="logo">
-          <a href="#">Ăn Vặt 247</a>
-        </div>
-        <nav>
-          <ul>
-            <li><Link href="/">Trang Chủ</Link></li>
-            <li><Link href="/shop1">Đồ ăn vặt</Link></li>
-            <li><Link href="/#best-sellers">Đồ ăn đêm</Link></li>
-            <li><Link href="/#best-sellers">Đồ uống</Link></li>
-            <li><Link href="/#best-sellers">Tin tức</Link></li>
-            <li><Link href="/#contact">Liên hệ</Link></li>
-          </ul>
-        </nav>
-        <div className="account-cart">
-          {user ? (
-            <>
-              <span className="text-lg font-bold">👋 Xin chào, {user.name}!</span>
-              <button 
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  setUser(null);
-                  window.location.reload();
-                }} 
-                className="ml-2 text-red-500 hover:underline"
-              >
-                Đăng xuất
-              </button>
-            </>
-          ) : (
-            <Link href="/auth">Đăng nhập</Link>
-          )}
-          <a href="#">
-            <i className="fa fa-shopping-cart" style={{ fontSize: "24px" }}></i>
-          </a>
-        </div>
-      </header>
 
+      <Header />
       <BannerSlider />
       <section id="about">
         <h2>Giới thiệu</h2>

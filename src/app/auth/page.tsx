@@ -1,23 +1,26 @@
 "use client";
-// import Footertt from "@/components/footer";
-// import Headertt from "@/components/Header";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // 🟢 Cập nhật formData
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 🟢 Xử lý đăng nhập/đăng ký
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-    const body = isLogin ? { email, password } : { name, email, password };
-
-    console.log("📡 Fetching:", endpoint);
+    const body = isLogin ? { email: formData.email, password: formData.password } : formData;
 
     try {
       const res = await fetch(endpoint, {
@@ -26,43 +29,24 @@ export default function AuthPage() {
         body: JSON.stringify(body),
       });
 
-      let data;
-      try {
-        data = await res.json();
-      } catch (error) {
-        console.error("❌ Lỗi parse JSON:", error);
-        alert("Lỗi server, vui lòng thử lại!");
-        return;
-      }
-
-      console.log("📥 Response:", data);
-
+      const data = await res.json();
       if (res.ok) {
         alert(isLogin ? "Đăng nhập thành công!" : "Đăng ký thành công!");
-
         if (isLogin) {
-          if (!data.token) {
-            alert("Lỗi: Không có token!");
-            return;
-          }
           localStorage.setItem("token", data.token);
           localStorage.setItem("role", data.role);
-
-          console.log("🛠 Role:", data.role);
-          if (data.role === "admin") {
-            router.push("/admin");
-          } else {
-            router.push("/");
-          }
+          router.push(data.role === "admin" ? "/admin" : "/");
         } else {
-          setIsLogin(true);
+          setIsLogin(true); // Chuyển về trang đăng nhập
         }
       } else {
         alert(data.message || "Đăng nhập thất bại!");
       }
     } catch (error) {
-      console.error("❌ Lỗi khi gọi API:", error);
+      console.error("❌ Lỗi API:", error);
       alert("Lỗi kết nối, vui lòng thử lại!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,30 +57,35 @@ export default function AuthPage() {
         {!isLogin && (
           <input
             type="text"
+            name="name"
             placeholder="Họ và tên"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formData.name}
+            onChange={handleChange}
             required
           />
         )}
         <input
           type="email"
+          name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleChange}
           required
         />
         <input
           type="password"
+          name="password"
           placeholder="Mật khẩu"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={handleChange}
           required
         />
-        <button type="submit">{isLogin ? "Đăng nhập" : "Đăng ký"}</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Đang xử lý..." : isLogin ? "Đăng nhập" : "Đăng ký"}
+        </button>
       </form>
-      <p className=" box-btn-login">
-        <button className=" btn-login-login" onClick={() => setIsLogin(!isLogin)}>
+      <p className="box-btn-login">
+        <button className="btn-login-login" onClick={() => setIsLogin(!isLogin)}>
           {isLogin ? "Chuyển sang Đăng ký" : "Chuyển sang Đăng nhập"}
         </button>
         {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}

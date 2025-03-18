@@ -84,3 +84,13 @@ button:hover {
   border-radius: 5px;
   cursor: pointer; 
 }
+.logout-btn{
+      margin-top: 0px !important;
+      width: 100%;
+      padding: 10px;
+      background-color: #FF6347 !important;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+}
