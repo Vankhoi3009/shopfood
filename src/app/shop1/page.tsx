@@ -1,34 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image"; // Dùng Next.js Image để tối ưu ảnh
+import { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
 import Footer from "@/components/footer";
 import Header from "@/components/Header";
 import Link from "next/link";
 import "@/styles/Shop1.css";
 import "@/styles/Base.css";
 
-// 🟢 Định nghĩa kiểu dữ liệu cho sản phẩm
+// 🟢 Định nghĩa kiểu dữ liệu
 type Product = {
   _id: string;
   name: string;
-  image: string; // Đảm bảo API trả về đúng key này
+  image: string;
+  category: string;
+};
+
+type Category = {
+  _id: string;
+  name: string;
 };
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
+  // 🟢 Lấy danh sách sản phẩm
   useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await fetch("/api/products");
-        if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu");
-        const data: Product[] = await res.json(); // 🟢 Cụ thể kiểu dữ liệu API
-
-        console.log("📌 Dữ liệu sản phẩm:", data); // Debug
-
+        if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu sản phẩm");
+        const data: Product[] = await res.json();
         setProducts(data);
       } catch (err) {
         console.error(err);
@@ -37,9 +44,35 @@ export default function Home() {
         setLoading(false);
       }
     }
-
     fetchProducts();
   }, []);
+
+  // 🟢 Lấy danh mục sản phẩm từ API
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch("/api/categories");
+        if (!res.ok) throw new Error("Lỗi khi lấy danh mục");
+        const data: Category[] = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error(err);
+        setError("Không thể tải danh mục");
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  // 🟢 Áp dụng bộ lọc
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
+      const matchesSearch = searchQuery
+        ? product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      return matchesCategory && matchesSearch;
+    });
+  }, [products, selectedCategory, searchQuery]);
 
   return (
     <main>
@@ -50,35 +83,54 @@ export default function Home() {
           {/* Sidebar */}
           <aside className="sidebar">
             <h3>Bộ lọc</h3>
+
+            {/* 🟢 Lọc theo danh mục */}
             <div className="filter-group">
               <h4>Danh mục</h4>
-              <label className="box-label-checkbox-product">
-                <input className="box-input-checkbox-product" type="checkbox" /> Bánh tráng
-              </label>
-              <label className="box-label-checkbox-product">
-                <input className="box-input-checkbox-product" type="checkbox" /> Xoài lắc
-              </label>
-              <label className="box-label-checkbox-product">
-                <input className="box-input-checkbox-product" type="checkbox" /> Gà rán
-              </label>
+              {categories.length === 0 ? (
+                <p>Đang tải danh mục...</p>
+              ) : (
+                categories.map((category) => (
+                  <label key={category._id} className="box-label-checkbox-product">
+                    <input
+                      type="radio"
+                      name="category"
+                      value={category.name}
+                      checked={selectedCategory === category.name}
+                      onChange={() => setSelectedCategory(category.name)}
+                    />
+                    {category.name}
+                  </label>
+                ))
+              )}
+              <button className="btn-clear-filter" onClick={() => setSelectedCategory(null)}>
+                Xóa lọc
+              </button>
             </div>
+
+            {/* 🟢 Tìm kiếm sản phẩm */}
             <div className="filter-group">
               <h4>Tìm kiếm</h4>
-              <input type="text" placeholder="Nhập tên sản phẩm..." />
+              <input
+                type="text"
+                placeholder="Nhập tên sản phẩm..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
               <button className="btn btn-search-sidebar-product">Tìm kiếm</button>
             </div>
           </aside>
 
-          {/* Danh sách sản phẩm */}
+          {/* 🟢 Danh sách sản phẩm */}
           <section className="product-list" id="product-list">
             {loading ? (
               <p>Đang tải sản phẩm...</p>
             ) : error ? (
               <p className="error-message">{error}</p>
-            ) : products.length === 0 ? (
-              <p>Không có sản phẩm nào.</p>
+            ) : filteredProducts.length === 0 ? (
+              <p>Không có sản phẩm nào phù hợp.</p>
             ) : (
-              products.map((product) => {
+              filteredProducts.map((product) => {
                 const imageUrl = product.image
                   ? `/api/images/${product.image}`
                   : "/images/default-product.jpg"; // Ảnh mặc định
@@ -104,7 +156,7 @@ export default function Home() {
           </section>
         </div>
 
-        {/* Nút Xem thêm */}
+        {/* 🟢 Nút Xem thêm */}
         <button className="btn-load-more" id="load-more">
           Xem thêm
         </button>

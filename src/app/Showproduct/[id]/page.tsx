@@ -13,8 +13,14 @@ type ProductDetail = {
   _id: string;
   name: string;
   image: string;
+  price: number;
+  oldPrice?: number;
+  discount?: number;
   countInStock: number;
+  category: string;
+  description: string;
 };
+
 export default function ProductDetail() {
   const pathname = usePathname();
   const productId = pathname.split("/").pop();
@@ -52,7 +58,6 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!product) return;
-    // Thêm sản phẩm vào giỏ hàng (có thể thêm logic xử lý ở đây)
     console.log(`Đã thêm ${quantity} sản phẩm ${product.name} vào giỏ hàng`);
     alert(`Đã thêm ${quantity} sản phẩm ${product.name} vào giỏ hàng`);
   };
@@ -79,6 +84,7 @@ export default function ProductDetail() {
           </div>
         ) : product ? (
           <div className="product-detail-wrapper">
+            {/* Hình ảnh sản phẩm */}
             <div className="product-detail-image">
               <Image
                 src={product.image ? `/api/images/${product.image}` : "/images/default-product.jpg"}
@@ -90,15 +96,26 @@ export default function ProductDetail() {
               />
             </div>
 
+            {/* Thông tin sản phẩm */}
             <div className="product-detail-info">
               <h1 className="product-detail-title">{product.name}</h1>
+              <p className="product-category">Danh mục: {product.category}</p>
+              <p className="product-description">{product.description}</p>
 
+              {/* Hiển thị giá & khuyến mãi */}
+              <div className="product-price">
+                {product.oldPrice ? (
+                  <>
+                    <span className="old-price">{product.oldPrice.toLocaleString()}đ</span>
+                    <span className="discount-price">{product.price.toLocaleString()}đ</span>
+                    <span className="discount-badge">-{product.discount}%</span>
+                  </>
+                ) : (
+                  <span className="final-price">{product.price.toLocaleString()}đ</span>
+                )}
+              </div>
 
-              
-
-              
-
-              
+              {/* Chọn số lượng */}
               <div className="product-detail-actions">
                 <div className="quantity-selector">
                   <label htmlFor="quantity">Số lượng:</label>
@@ -112,8 +129,9 @@ export default function ProductDetail() {
                     disabled={product.countInStock <= 0}
                   />
                 </div>
-                
-                <button 
+
+                {/* Nút thêm vào giỏ hàng */}
+                <button
                   className="btn-add-to-cart"
                   onClick={handleAddToCart}
                   disabled={product.countInStock <= 0}
@@ -129,13 +147,6 @@ export default function ProductDetail() {
             <Link href="/Shop1" className="btn btn-back">
               Quay lại danh sách sản phẩm
             </Link>
-          </div>
-        )}
-
-        {product && (
-          <div className="related-products">
-            <h2>Sản phẩm liên quan</h2>
-            <p>Tính năng đang phát triển...</p>
           </div>
         )}
       </div>
