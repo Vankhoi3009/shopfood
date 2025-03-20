@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image"; // Dùng Next.js Image để tối ưu ảnh
 import Footer from "@/components/footer";
 import Header from "@/components/Header";
+import Link from "next/link";
 import "@/styles/Shop1.css";
 import "@/styles/Base.css";
 
@@ -51,9 +52,15 @@ export default function Home() {
             <h3>Bộ lọc</h3>
             <div className="filter-group">
               <h4>Danh mục</h4>
-              <label className=" box-label-checkbox-product"><input className="box-input-checkbox-product" type="checkbox" /> Bánh tráng</label>
-              <label className=" box-label-checkbox-product"><input className="box-input-checkbox-product" type="checkbox" /> Xoài lắc</label>
-              <label className=" box-label-checkbox-product"><input className="box-input-checkbox-product" type="checkbox" /> Gà rán</label>
+              <label className="box-label-checkbox-product">
+                <input className="box-input-checkbox-product" type="checkbox" /> Bánh tráng
+              </label>
+              <label className="box-label-checkbox-product">
+                <input className="box-input-checkbox-product" type="checkbox" /> Xoài lắc
+              </label>
+              <label className="box-label-checkbox-product">
+                <input className="box-input-checkbox-product" type="checkbox" /> Gà rán
+              </label>
             </div>
             <div className="filter-group">
               <h4>Tìm kiếm</h4>
@@ -77,18 +84,20 @@ export default function Home() {
                   : "/images/default-product.jpg"; // Ảnh mặc định
 
                 return (
-                  <div key={product._id} className="product">
-                    {/* ✅ Sử dụng next/image để tối ưu ảnh */}
-                    <Image
-                      src={imageUrl}
-                      alt={product.name}
-                      width={300}
-                      height={300}
-                      loading="lazy"
-                      className="product-image"
-                    />
-                    <h3>{product.name}</h3>
-                  </div>
+                  <Link key={product._id} href={`/Showproduct/${product._id}`} className="product">
+                    <div className="cursor-pointer">
+                      {/* ✅ Sử dụng next/image để tối ưu ảnh */}
+                      <Image
+                        src={imageUrl}
+                        alt={product.name}
+                        width={300}
+                        height={300}
+                        loading="lazy"
+                        className="product-image"
+                      />
+                      <h3 className="text-blue-500 hover:underline">{product.name}</h3>
+                    </div>
+                  </Link>
                 );
               })
             )}
