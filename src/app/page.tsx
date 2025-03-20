@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import BannerSlider from "@/components/home";
 import ContactForm from "@/components/contactform";
 import Footer from "@/components/footer";
@@ -10,7 +11,14 @@ import ShareMoments from "@/components/imageforme";
 import "@/styles/Home.css";
 import "@/styles/Base.css";
 
-// Định nghĩa kiểu dữ liệu User
+// 🟢 Định nghĩa kiểu dữ liệu sản phẩm
+interface Product {
+  _id: string;
+  name: string;
+  image: string;
+}
+
+// 🟢 Định nghĩa kiểu dữ liệu User
 interface User {
   name: string;
   email?: string;
@@ -18,6 +26,10 @@ interface User {
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,34 +51,88 @@ export default function Home() {
     }
   }, []);
 
+  // 🟢 Lấy sản phẩm từ API
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products");
+        if (!res.ok) throw new Error("Lỗi khi lấy sản phẩm");
+        const data: Product[] = await res.json();
+
+        setProducts(data.slice(0, 4)); // 🟢 Lấy 4 sản phẩm đầu tiên (Sản phẩm nổi bật)
+        setFavoriteProducts(data.slice(-4)); // 🟢 Lấy 4 sản phẩm cuối cùng (Sản phẩm được yêu thích nhất)
+      } catch (err) {
+        console.error(err);
+        setError("Không thể tải sản phẩm");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
   return (
     <main>
-
       <Header />
       <BannerSlider />
+
       <section id="about">
         <h2>Giới thiệu</h2>
         <p>Ăn Vặt 247 chuyên cung cấp các món ăn vặt ngon, chất lượng.</p>
         <img src="img/gt.jpg" alt="" />
       </section>
 
-      <section id="new-products">
-        <h2>Sản phẩm mới</h2>
+      {/* 🟢 Sản phẩm nổi bật */}
+      <section className="product-section">
+        <h2>Sản phẩm nổi bật</h2>
         <div className="product-list-home">
-          <div className="product-home"><img src="img/product1.jpg" alt="" /><h3>Sản phẩm 1</h3></div>
-          <div className="product-home"><img src="img/product2.jpg" alt="" /><h3>Sản phẩm 2</h3></div>
-          <div className="product-home"><img src="img/product3.jpg" alt="" /><h3>Sản phẩm 3</h3></div>
-          <div className="product-home"><img src="img/produc4.jpg" alt="" /><h3>Sản phẩm 4</h3></div>
+          {loading ? (
+            <p>Đang tải sản phẩm...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) : (
+            products.map((product) => (
+              <Link key={product._id} href={`/Showproduct/${product._id}`} className="product-home">
+                <div className="product-card">
+                  <Image
+                    src={`/api/images/${product.image}`}
+                    alt={product.name}
+                    width={200}
+                    height={200}
+                    className="product-image"
+                  />
+                  <h3>{product.name}</h3>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 
-      <section id="best-sellers">
-        <h2>Sản phẩm bán chạy</h2>
+      {/* 🟢 Sản phẩm được yêu thích nhất */}
+      <section className="product-section">
+        <h2>Sản phẩm được yêu thích nhất</h2>
         <div className="product-list-home">
-          <div className="product-home"><img src="img/product5.jpg" alt="" /><h3>Sản phẩm 5</h3></div>
-          <div className="product-home"><img src="img/product6.jpg" alt="" /><h3>Sản phẩm 6</h3></div>
-          <div className="product-home"><img src="img/product7.jpg" alt="" /><h3>Sản phẩm 7</h3></div>
-          <div className="product-home"><img src="img/product8.jpg" alt="" /><h3>Sản phẩm 8</h3></div>
+          {loading ? (
+            <p>Đang tải sản phẩm...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) : (
+            favoriteProducts.map((product) => (
+              <Link key={product._id} href={`/Showproduct/${product._id}`} className="product-home">
+                <div className="product-card">
+                  <Image
+                    src={`/api/images/${product.image}`}
+                    alt={product.name}
+                    width={200}
+                    height={200}
+                    className="product-image"
+                  />
+                  <h3>{product.name}</h3>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 
