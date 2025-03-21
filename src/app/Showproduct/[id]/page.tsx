@@ -57,7 +57,7 @@ export default function ProductDetail() {
         const data = await res.json();
 
         console.log("📌 Sản phẩm liên quan:", data);
-        setRelatedProducts(data);
+        setRelatedProducts(data.slice(0, 4));
       } catch (err) {
         console.error("Lỗi tải sản phẩm liên quan:", err);
       }
@@ -159,6 +159,11 @@ export default function ProductDetail() {
                 </div>
               </div>
             </div>
+              {/* Mô tả sản phẩm */}
+              <div className="product-description-container">
+                <h3 className="description-title">Mô tả sản phẩm</h3>
+                <p className="product-description">{product.description}</p>
+              </div>
 
             {/* 🔥 DANH MỤC SẢN PHẨM LIÊN QUAN 🔥 */}
             <section className="related-products">

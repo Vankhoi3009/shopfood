@@ -170,4 +170,69 @@
   .related-product-price .discount-price {
     color: red;
   }
-  
+.product-list{
+  display: flex;
+}
+/* 🔥 Mô tả sản phẩm full màn hình */
+.product-description-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto; /* Căn giữa */
+  padding: 20px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề */
+.description-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Nội dung mô tả */
+.product-description {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+/* 📱 Responsive */
+@media (max-width: 1024px) {
+  .product-description-container {
+    padding: 15px;
+  }
+  .description-title {
+    font-size: 18px;
+  }
+  .product-description {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-description-container {
+    padding: 10px;
+  }
+  .description-title {
+    font-size: 16px;
+  }
+  .product-description {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-description-container {
+    padding: 8px;
+  }
+  .description-title {
+    font-size: 14px;
+  }
+  .product-description {
+    font-size: 12px;
+  }
+}

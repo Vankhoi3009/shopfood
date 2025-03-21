@@ -16,6 +16,7 @@ export default function AdminDashboard() {
           <AddProduct />
           <ProductList />
         </div>
+        
       </div>
     </div>
   );
