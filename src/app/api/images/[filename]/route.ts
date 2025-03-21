@@ -1,10 +1,14 @@
-import {NextResponse, NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import connectDB from "@backend/config/db";
 import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
+// Correctly typed params for Next.js App Router
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { filename: string } }
+) {
   const { filename } = params;
 
   if (!filename) {
@@ -51,17 +55,18 @@ export async function GET(req: NextRequest, { params }: { params: { filename: st
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
   }
 }
-//API Thêm Ảnh vào MongoDB GridFS
+
+// POST handler for uploading images to MongoDB GridFS
 export async function POST(req: NextRequest) {
   await connectDB();
 
   if (mongoose.connection.readyState !== 1) {
-    return new Response("MongoDB connection failed", { status: 500 });
+    return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
   }
 
   const db = mongoose.connection.db;
   if (!db) {
-    return new Response("Database not found", { status: 500 });
+    return NextResponse.json({ error: "Database not found" }, { status: 500 });
   }
 
   const bucket = new GridFSBucket(db, { bucketName: "uploads" });
@@ -71,16 +76,15 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File;
 
     if (!file) {
-      return new Response("No file uploaded", { status: 400 });
+      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
     const reader = file.stream().getReader();
     const fileStream = Readable.from({
       async *[Symbol.asyncIterator]() {
-        const done = false;
-        while (!done) {
-          const { value, done: isDone } = await reader.read();
-          if (isDone) break;
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
           yield value;
         }
       }
@@ -92,12 +96,12 @@ export async function POST(req: NextRequest) {
       fileStream.pipe(uploadStream).on("error", reject).on("finish", resolve);
     });
 
-    return new Response(JSON.stringify({ message: "Upload thành công!", filename: file.name }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json({ 
+      message: "Upload thành công!", 
+      filename: file.name 
+    }, { status: 200 });
   } catch (error) {
     console.error("❌ Error uploading image:", error);
-    return new Response("Error uploading image", { status: 500 });
+    return NextResponse.json({ error: "Error uploading image" }, { status: 500 });
   }
 }
