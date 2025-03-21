@@ -1,11 +1,11 @@
-import {NextResponse, NextRequest } from "next/server"; // ✅ Chỉ import NextRequest
+import {NextResponse, NextRequest } from "next/server";
 import connectDB from "@backend/config/db";
 import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
-  const { filename } = context.params;
+export async function GET(_: NextRequest, { params }: { params: { filename: string } }) {
+  const { filename } = params;
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
@@ -36,22 +36,21 @@ export async function GET(req: NextRequest, { params }: { params: { filename: st
 
     const stream = bucket.openDownloadStreamByName(filename);
 
-return new Response(new ReadableStream({
-  start(controller) {
-    stream.on("data", (chunk) => controller.enqueue(chunk));
-    stream.on("end", () => controller.close());
-    stream.on("error", (err) => controller.error(err));
-  },
-}), {
-  headers: { "Content-Type": file.contentType || "image/jpeg" },
-});
+    return new Response(new ReadableStream({
+      start(controller) {
+        stream.on("data", (chunk) => controller.enqueue(chunk));
+        stream.on("end", () => controller.close());
+        stream.on("error", (err) => controller.error(err));
+      },
+    }), {
+      headers: { "Content-Type": file.contentType || "image/jpeg" },
+    });
 
   } catch (error) {
     console.error("❌ Error fetching image:", error);
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
   }
 }
-
 
 //API Thêm Ảnh vào MongoDB GridFS
 export async function POST(req: NextRequest) {
