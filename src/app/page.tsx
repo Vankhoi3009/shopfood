@@ -83,7 +83,7 @@ export default function Home() {
       </section>
 
       {/* 🟢 Sản phẩm nổi bật */}
-      <section className="product-section">
+      <section id="new-products">
         <h2>Sản phẩm nổi bật</h2>
         <div className="product-list-home">
           {loading ? (
@@ -93,16 +93,13 @@ export default function Home() {
           ) : (
             products.map((product) => (
               <Link key={product._id} href={`/Showproduct/${product._id}`} className="product-home">
-                <div className="product-card">
-                  <Image
-                    src={`/api/images/${product.image}`}
-                    alt={product.name}
-                    width={200}
-                    height={200}
-                    className="product-image"
-                  />
-                  <h3>{product.name}</h3>
-                </div>
+                <Image
+                  src={`/api/images/${product.image}`}
+                  alt={product.name}
+                  width={200}
+                  height={200}
+                />
+                <h3>{product.name}</h3>
               </Link>
             ))
           )}
@@ -110,7 +107,7 @@ export default function Home() {
       </section>
 
       {/* 🟢 Sản phẩm được yêu thích nhất */}
-      <section className="product-section">
+      <section id="best-sellers">
         <h2>Sản phẩm được yêu thích nhất</h2>
         <div className="product-list-home">
           {loading ? (
@@ -120,16 +117,13 @@ export default function Home() {
           ) : (
             favoriteProducts.map((product) => (
               <Link key={product._id} href={`/Showproduct/${product._id}`} className="product-home">
-                <div className="product-card">
-                  <Image
-                    src={`/api/images/${product.image}`}
-                    alt={product.name}
-                    width={200}
-                    height={200}
-                    className="product-image"
-                  />
-                  <h3>{product.name}</h3>
-                </div>
+                <Image
+                  src={`/api/images/${product.image}`}
+                  alt={product.name}
+                  width={200}
+                  height={200}
+                />
+                <h3>{product.name}</h3>
               </Link>
             ))
           )}

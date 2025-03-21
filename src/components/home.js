@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function BannerSlider() {
   const [index, setIndex] = useState(0);
-  const slides = ["/img/banner.jpg", "/img/banner2.jpg"]; // Danh sách ảnh banner
+  const slides = ["/img/banner.jpg", "/img/banner55.jpg"]; // Danh sách ảnh banner
 
   useEffect(() => {
     const interval = setInterval(() => {
