@@ -5,7 +5,7 @@ import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
 export async function GET(req: NextRequest, context: { params: Record<string, string> }) {
-  const params = await context.params; // ✅ Fix lỗi: `params` phải await trước khi sử dụng
+  const params = await context.params;
   const filename = params.filename;
 
   if (!filename) {

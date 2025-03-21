@@ -1,22 +1,11 @@
-// /app/api/products/[id]/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
 import { ObjectId } from "mongodb";
 
-export async function GET(
-  req: NextRequest,
-  context: { params?: { id?: string } }
-) {
+// Hàm GET
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { params } = context;
-
-    // 🛑 Kiểm tra params tồn tại trước khi sử dụng
-    if (!params || !params.id) {
-      return NextResponse.json({ error: "Missing product ID" }, { status: 400 });
-    }
-
-    const id = params.id;
+    const { id } = params;
 
     // 🛑 Kiểm tra ID có hợp lệ không
     if (!ObjectId.isValid(id)) {
@@ -43,16 +32,14 @@ export async function GET(
     return NextResponse.json({ error: "Failed to fetch product details" }, { status: 500 });
   }
 }
-// Thêm PATCH và DELETE nếu cần
-export const PATCH = async (
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) => {
+
+// Hàm PATCH
+export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
   try {
     const db = await connectDB();
     if (!db) return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
 
-    const id = params.id;
+    const { id } = params;
     if (!ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
     }
@@ -74,15 +61,13 @@ export const PATCH = async (
   }
 };
 
-export const DELETE = async (
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) => {
+// Hàm DELETE
+export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
   try {
     const db = await connectDB();
     if (!db) return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
 
-    const id = params.id;
+    const { id } = params;
     if (!ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
     }
