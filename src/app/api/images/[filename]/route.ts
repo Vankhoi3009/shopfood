@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-export async function GET(_: NextRequest, { params }: { params: { filename: string } }) {
-  const { filename } = params;
+export async function GET(_: NextRequest, context: RouteContext<{ filename: string }>) {
+  const { filename } = context.params; // ✅ Đã sửa lỗi
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
