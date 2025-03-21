@@ -1,34 +1,40 @@
-import { NextRequest } from "next/server"; // ✅ Chỉ import NextRequest
+import {NextResponse , NextRequest } from "next/server"; // ✅ Chỉ import NextRequest
 import connectDB from "@backend/config/db";
 import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
 // ✅ API Lấy Ảnh từ MongoDB GridFS (Không thay đổi code cũ)
-export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
+export async function GET(req: NextRequest, context: { params: { filename: string } }) {
+  const { filename } = context.params; // ✅ Lấy filename từ context.params
+
+  if (!filename) {
+    return new NextResponse("Filename is required", { status: 400 });
+  }
+
   await connectDB();
 
   if (mongoose.connection.readyState !== 1) {
-    return new Response("MongoDB connection failed", { status: 500 });
+    return new NextResponse("MongoDB connection failed", { status: 500 });
   }
 
   const db = mongoose.connection.db;
   if (!db) {
-    return new Response("Database not found", { status: 500 });
+    return new NextResponse("Database not found", { status: 500 });
   }
 
   const bucket = new GridFSBucket(db, { bucketName: "uploads" });
 
   try {
-    const file = await db.collection("uploads.files").findOne({ filename: params.filename });
+    const file = await db.collection("uploads.files").findOne({ filename });
 
     if (!file) {
-      return new Response("File not found", { status: 404 });
+      return new NextResponse("File not found", { status: 404 });
     }
 
-    const stream = bucket.openDownloadStreamByName(params.filename);
-    
-    return new Response(new ReadableStream({
+    const stream = bucket.openDownloadStreamByName(filename);
+
+    return new NextResponse(new ReadableStream({
       start(controller) {
         stream.on("data", (chunk) => controller.enqueue(chunk));
         stream.on("end", () => controller.close());
@@ -36,11 +42,11 @@ export async function GET(req: NextRequest, { params }: { params: { filename: st
       },
     }), {
       status: 200,
-      headers: { "Content-Type": file.contentType || "image/jpeg" }, // ✅ Xác định type từ file lưu trong DB
+      headers: { "Content-Type": file.contentType || "image/jpeg" }, // ✅ Lấy type từ DB
     });
   } catch (error) {
     console.error("❌ Error fetching image:", error);
-    return new Response("Error fetching image", { status: 500 });
+    return new NextResponse("Error fetching image", { status: 500 });
   }
 }
 

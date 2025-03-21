@@ -1,5 +1,5 @@
 "use client"; // Chỉ định rằng đây là component chạy trên client-side
-
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function BannerSlider() {
@@ -18,7 +18,13 @@ export default function BannerSlider() {
     <section className="banner">
       {slides.map((src, i) => (
         <div key={i} className={`slide ${i === index ? "active" : "hidden"}`}>
-          <img src={src} alt={`Banner ${i + 1}`} />
+          <Image 
+            src={src} 
+            alt={`Banner ${i + 1}`} 
+            width={800}  // Điều chỉnh theo kích thước ảnh
+            height={400} 
+            layout="intrinsic" // Tự động co giãn
+          />
           <div className="banner-text">
             <h1>{i === 0 ? "Chào mừng đến với Ăn Vặt 247" : "Hương vị truyền thống, chất lượng hàng đầu"}</h1>
             <a href="#contact" className="btn">
