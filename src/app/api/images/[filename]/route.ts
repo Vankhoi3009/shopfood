@@ -1,12 +1,11 @@
-import {NextResponse, NextRequest } from "next/server"; // ✅ Chỉ import NextRequest
+import {NextResponse, NextRequest } from "next/server";
 import connectDB from "@backend/config/db";
 import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-export async function GET(req: NextRequest, context: { params: Record<string, string> }) {
-  const params = await context.params;
-  const filename = params.filename;
+export async function GET(_: NextRequest, context: { params: { filename: string } }) {
+  const { filename } = context.params;
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
@@ -37,17 +36,13 @@ export async function GET(req: NextRequest, context: { params: Record<string, st
 
     const stream = bucket.openDownloadStreamByName(filename);
 
-    return new NextResponse(new ReadableStream({
+    return new Response(new ReadableStream({
       start(controller) {
         stream.on("data", (chunk) => controller.enqueue(chunk));
         stream.on("end", () => controller.close());
-        stream.on("error", (err) => {
-          console.error("❌ Stream error:", err);
-          controller.error(err);
-        });
+        stream.on("error", (err) => controller.error(err));
       },
     }), {
-      status: 200,
       headers: { "Content-Type": file.contentType || "image/jpeg" },
     });
 
@@ -56,7 +51,6 @@ export async function GET(req: NextRequest, context: { params: Record<string, st
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
   }
 }
-
 //API Thêm Ảnh vào MongoDB GridFS
 export async function POST(req: NextRequest) {
   await connectDB();
