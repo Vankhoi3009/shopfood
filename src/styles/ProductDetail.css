@@ -174,7 +174,7 @@
   display: flex;
 }
 .product-list-show-product img{
-  width: 300px;
+  width: 250px;
     height: 200px;
 }
 /* 🔥 Mô tả sản phẩm full màn hình */
@@ -239,4 +239,10 @@
   .product-description {
     font-size: 12px;
   }
+}
+.product-card{
+  padding: 10px;
+  background-color: #ccc;
+  margin: 10px;
+  border-radius: 6px;
 }
