@@ -8,18 +8,25 @@ interface Image {
 
 export default function AddProduct() {
   const [name, setName] = useState("");
-  const [category, setCategory] = useState(""); // Danh mục sản phẩm
-  const [description, setDescription] = useState(""); // Chi tiết sản phẩm
+  const [category, setCategory] = useState(""); 
+  const [description, setDescription] = useState(""); 
   const [price, setPrice] = useState<number | "">("");
   const [oldPrice, setOldPrice] = useState<number | "">("");
   const [countInStock, setCountInStock] = useState<number | "">("");
-  const [images, setImages] = useState<Image[]>([]);
+  const [images, setImages] = useState<Image[]>([]); // ✅ Khởi tạo với mảng rỗng
   const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
     fetch("/api/images")
       .then((res) => res.json())
-      .then((data: Image[]) => setImages(data));
+      .then((data) => {
+        console.log("API Response:", data); // ✅ Kiểm tra dữ liệu nhận được
+        setImages(Array.isArray(data) ? data : []); // ✅ Đảm bảo luôn là mảng
+      })
+      .catch((error) => {
+        console.error("Lỗi khi tải ảnh:", error);
+        setImages([]); // ✅ Đặt giá trị mặc định nếu lỗi
+      });
   }, []);
 
   const handleAddProduct = async () => {
@@ -43,7 +50,6 @@ export default function AddProduct() {
     <div className="p-4 bg-white shadow rounded-lg">
       <h3 className="text-lg font-semibold mb-4">Thêm sản phẩm</h3>
 
-      {/* Tên sản phẩm */}
       <input
         type="text"
         placeholder="Tên sản phẩm"
@@ -51,7 +57,6 @@ export default function AddProduct() {
         onChange={(e) => setName(e.target.value)}
       />
 
-      {/* Danh mục sản phẩm */}
       <input
         type="text"
         placeholder="Danh mục sản phẩm (Ví dụ: Bánh tráng, Đồ ăn vặt...)"
@@ -59,7 +64,6 @@ export default function AddProduct() {
         onChange={(e) => setCategory(e.target.value)}
       />
 
-      {/* Chi tiết sản phẩm */}
       <textarea
         placeholder="Chi tiết sản phẩm..."
         className="border p-2 w-full mb-3"
@@ -67,7 +71,6 @@ export default function AddProduct() {
         onChange={(e) => setDescription(e.target.value)}
       ></textarea>
 
-      {/* Giá gốc */}
       <input
         type="number"
         placeholder="Giá gốc (VNĐ)"
@@ -75,7 +78,6 @@ export default function AddProduct() {
         onChange={(e) => setOldPrice(e.target.value ? parseFloat(e.target.value) : "")}
       />
 
-      {/* Giá giảm */}
       <input
         type="number"
         placeholder="Giá giảm (VNĐ)"
@@ -83,7 +85,6 @@ export default function AddProduct() {
         onChange={(e) => setPrice(e.target.value ? parseFloat(e.target.value) : "")}
       />
 
-      {/* Số lượng tồn kho */}
       <input
         type="number"
         placeholder="Số lượng tồn kho"
@@ -94,14 +95,17 @@ export default function AddProduct() {
       {/* Chọn ảnh */}
       <select className="border p-2 w-full mb-3" onChange={(e) => setSelectedImage(e.target.value)}>
         <option value="">Chọn ảnh</option>
-        {images.map((img: Image) => (
-          <option key={img._id} value={img.filename}>
-            {img.filename}
-          </option>
-        ))}
+        {images.length > 0 ? (
+          images.map((img) => (
+            <option key={img._id} value={img.filename}>
+              {img.filename}
+            </option>
+          ))
+        ) : (
+          <option disabled>Không có ảnh nào</option>
+        )}
       </select>
 
-      {/* Nút thêm sản phẩm */}
       <button onClick={handleAddProduct} className="mt-2 p-2 bg-green-500 text-white rounded w-full">
         Thêm sản phẩm
       </button>
