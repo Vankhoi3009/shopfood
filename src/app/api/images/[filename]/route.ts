@@ -5,8 +5,11 @@ import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
 // ✅ API Lấy Ảnh từ MongoDB GridFS (Không thay đổi code cũ)
-export async function GET(req: NextRequest, context: { params: { filename: string } }) {
-  const { filename } = context.params; // ✅ Lấy filename từ context.params
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { filename: string } }
+) {
+  const { filename } = params;
 
   if (!filename) {
     return new NextResponse("Filename is required", { status: 400 });
@@ -42,7 +45,7 @@ export async function GET(req: NextRequest, context: { params: { filename: strin
       },
     }), {
       status: 200,
-      headers: { "Content-Type": file.contentType || "image/jpeg" }, // ✅ Lấy type từ DB
+      headers: { "Content-Type": file.contentType || "image/jpeg" },
     });
   } catch (error) {
     console.error("❌ Error fetching image:", error);
