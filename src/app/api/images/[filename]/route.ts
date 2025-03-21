@@ -4,16 +4,9 @@ import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-//API Lấy Ảnh từ MongoDB GridFS
-interface Context {
-  params: {
-    filename: string;
-  };
-}
-
-// ✅ API Lấy ảnh từ MongoDB GridFS (đã sửa lỗi TypeScript)
-export async function GET(req: NextRequest, context: Context) {
-  const { filename } = context.params; // ✅ Truy xuất params đúng cách
+export async function GET(req: NextRequest, context: { params: Record<string, string> }) {
+  const params = await context.params; // ✅ Fix lỗi: `params` phải await trước khi sử dụng
+  const filename = params.filename;
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
