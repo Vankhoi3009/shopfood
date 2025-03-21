@@ -5,10 +5,11 @@ import { ObjectId } from "mongodb";
 // Hàm GET
 export async function GET(req: NextRequest) {
   try {
-    const { id } = req.nextUrl.pathname.split("/").pop()!; // Lấy id từ đường dẫn
+    const urlParts = req.nextUrl.pathname.split("/");
+    const id = urlParts.pop(); // Lấy ID từ đường dẫn
 
     // 🛑 Kiểm tra ID có hợp lệ không
-    if (!ObjectId.isValid(id)) {
+    if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
     }
 
@@ -36,13 +37,16 @@ export async function GET(req: NextRequest) {
 // Hàm PATCH
 export const PATCH = async (req: NextRequest) => {
   try {
-    const { id } = req.nextUrl.pathname.split("/").pop()!; // Lấy id từ đường dẫn
+    const urlParts = req.nextUrl.pathname.split("/");
+    const id = urlParts.pop(); // Lấy ID từ đường dẫn
+
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+    }
 
     const db = await connectDB();
-    if (!db) return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
-
-    if (!ObjectId.isValid(id)) {
-      return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+    if (!db) {
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
     const updates = await req.json();
@@ -65,13 +69,16 @@ export const PATCH = async (req: NextRequest) => {
 // Hàm DELETE
 export const DELETE = async (req: NextRequest) => {
   try {
-    const { id } = req.nextUrl.pathname.split("/").pop()!; // Lấy id từ đường dẫn
+    const urlParts = req.nextUrl.pathname.split("/");
+    const id = urlParts.pop(); // Lấy ID từ đường dẫn
+
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+    }
 
     const db = await connectDB();
-    if (!db) return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
-
-    if (!ObjectId.isValid(id)) {
-      return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+    if (!db) {
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
     const result = await db.collection("test").deleteOne({ _id: new ObjectId(id) });
