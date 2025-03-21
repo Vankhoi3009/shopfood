@@ -118,7 +118,7 @@ export default function ProductDetail() {
               <div className="product-detail-info">
                 <h1 className="product-detail-title">{product.name}</h1>
                 <p className="product-category">Danh mục: {product.category}</p>
-                <p className="product-description">{product.description}</p>
+
 
                 {/* Hiển thị giá & khuyến mãi */}
                 <div className="product-price">
@@ -168,7 +168,7 @@ export default function ProductDetail() {
             {/* 🔥 DANH MỤC SẢN PHẨM LIÊN QUAN 🔥 */}
             <section className="related-products">
               <h2 className="section-title">Sản phẩm liên quan</h2>
-              <div className="product-list">
+              <div className="product-list-show-product">
                 {relatedProducts.length > 0 ? (
                   relatedProducts.map((item) => (
                     <div key={item._id} className="product-card">

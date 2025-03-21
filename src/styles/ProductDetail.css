@@ -170,8 +170,12 @@
   .related-product-price .discount-price {
     color: red;
   }
-.product-list{
+.product-list-show-product{
   display: flex;
+}
+.product-list-show-product img{
+  width: 300px;
+    height: 200px;
 }
 /* 🔥 Mô tả sản phẩm full màn hình */
 .product-description-container {
