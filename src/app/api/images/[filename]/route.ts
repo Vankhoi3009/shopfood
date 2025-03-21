@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-export async function GET(req: NextRequest, context: { params: { filename: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
   const { filename } = context.params;
 
   if (!filename) {
