@@ -5,8 +5,16 @@ import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
 //API Lấy Ảnh từ MongoDB GridFS
-export async function GET(req: NextRequest, context: { params: { filename: string } }) {
-  const { filename } = context.params; // ✅ Sửa kiểu dữ liệu
+interface Context {
+  params: {
+    filename: string;
+  };
+}
+
+// ✅ API Lấy ảnh từ MongoDB GridFS (đã sửa lỗi TypeScript)
+export async function GET(req: NextRequest, context: Context) {
+  const { filename } = context.params; // ✅ Truy xuất params đúng cách
+
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
   }
