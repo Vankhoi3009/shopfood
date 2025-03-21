@@ -36,9 +36,15 @@ export async function GET(req: NextRequest, context: { params: { filename: strin
 
     const stream = bucket.openDownloadStreamByName(filename);
 
-    return new Response(stream as any, {
-      headers: { "Content-Type": file.contentType || "image/jpeg" },
-    });
+return new Response(new ReadableStream({
+  start(controller) {
+    stream.on("data", (chunk) => controller.enqueue(chunk));
+    stream.on("end", () => controller.close());
+    stream.on("error", (err) => controller.error(err));
+  },
+}), {
+  headers: { "Content-Type": file.contentType || "image/jpeg" },
+});
 
   } catch (error) {
     console.error("❌ Error fetching image:", error);
