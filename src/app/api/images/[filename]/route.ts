@@ -5,8 +5,8 @@ import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
 //API Lấy Ảnh từ MongoDB GridFS
-export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
-  const { filename } = params;
+export async function GET(req: NextRequest, context: { params: { filename: string } }) {
+  const { filename } = context.params; // ✅ Sửa kiểu dữ liệu
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
   }
