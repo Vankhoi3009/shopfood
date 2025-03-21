@@ -2,26 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
 import { ObjectId } from "mongodb";
 
-// Hàm GET
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest) {
   try {
-    const { id } = params;
+    const urlParts = req.nextUrl.pathname.split("/");
+    const id = urlParts.pop();
 
-    // 🛑 Kiểm tra ID có hợp lệ không
-    if (!ObjectId.isValid(id)) {
+    if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
     }
 
-    // ✅ Kết nối database
     const db = await connectDB();
     if (!db) {
       return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
-    // ✅ Tìm sản phẩm trong MongoDB
     const product = await db.collection("test").findOne({ _id: new ObjectId(id) });
 
-    // 🛑 Kiểm tra nếu sản phẩm không tồn tại
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -33,15 +29,18 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-// Hàm PATCH
-export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const PATCH = async (req: NextRequest) => {
   try {
-    const db = await connectDB();
-    if (!db) return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
+    const urlParts = req.nextUrl.pathname.split("/");
+    const id = urlParts.pop();
 
-    const { id } = params;
-    if (!ObjectId.isValid(id)) {
+    if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+    }
+
+    const db = await connectDB();
+    if (!db) {
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
     const updates = await req.json();
@@ -61,15 +60,18 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
   }
 };
 
-// Hàm DELETE
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = async (req: NextRequest) => {
   try {
-    const db = await connectDB();
-    if (!db) return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
+    const urlParts = req.nextUrl.pathname.split("/");
+    const id = urlParts.pop(); 
 
-    const { id } = params;
-    if (!ObjectId.isValid(id)) {
+    if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+    }
+
+    const db = await connectDB();
+    if (!db) {
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
     const result = await db.collection("test").deleteOne({ _id: new ObjectId(id) });
