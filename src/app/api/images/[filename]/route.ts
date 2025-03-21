@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-export async function GET(_: NextRequest, context: RouteContext<{ filename: string }>) {
-  const { filename } = context.params; // ✅ Đã sửa lỗi
+export async function GET(_: NextRequest, context: { params: { filename: string } }) {
+  const { filename } = context.params;
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
@@ -51,7 +51,6 @@ export async function GET(_: NextRequest, context: RouteContext<{ filename: stri
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
   }
 }
-
 //API Thêm Ảnh vào MongoDB GridFS
 export async function POST(req: NextRequest) {
   await connectDB();
