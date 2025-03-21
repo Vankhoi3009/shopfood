@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation"; // 🟢 Thay vì useRouter()
 
@@ -46,11 +47,14 @@ export default function ProductList() {
             <li key={product._id} className="p-2 border rounded-md flex justify-between items-center">
               <div className="flex items-center gap-4">
                 {product.image && (
-                  <img
-                    src={`/api/images/${product.image}`}
-                    alt={product.name}
-                    className="w-12 h-12 object-cover rounded"
+                  <Image
+                  src={`/api/images/${product.image}`}
+                  alt={product.name}
+                  width={48}
+                  height={48}
+                  className="object-cover rounded"
                   />
+
                 )}
                 <span>{product.name}</span>
               </div>

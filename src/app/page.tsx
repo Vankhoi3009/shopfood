@@ -1,8 +1,7 @@
 "use client";
-
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import BannerSlider from "@/components/home";
 import ContactForm from "@/components/contactform";
 import Footer from "@/components/footer";
@@ -19,38 +18,11 @@ interface Product {
 }
 
 // 🟢 Định nghĩa kiểu dữ liệu User
-interface User {
-  name: string;
-  email?: string;
-}
-
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      fetch("/api/auth/me", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((data: User) => {
-          if (data.name) {
-            setUser(data);
-          } else {
-            setUser(null);
-          }
-        })
-        .catch(() => setUser(null));
-    }
-  }, []);
-
   // 🟢 Lấy sản phẩm từ API
   useEffect(() => {
     async function fetchProducts() {
@@ -79,7 +51,14 @@ export default function Home() {
       <section id="about">
         <h2>Giới thiệu</h2>
         <p>Ăn Vặt 247 chuyên cung cấp các món ăn vặt ngon, chất lượng.</p>
-        <img src="img/gt.jpg" alt="" />
+        <Image 
+          src="/img/gt.jpg" 
+          alt="Mô tả ảnh"
+          width={500} 
+          height={300} 
+          style={{ width: "50%", height: "auto" }}
+        />
+
       </section>
 
       {/* 🟢 Sản phẩm nổi bật */}
