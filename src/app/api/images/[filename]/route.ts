@@ -4,12 +4,13 @@ import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
+interface Context {
+  params: Promise<{ filename: string }>;
+}
+
 // Correctly typed params for Next.js App Router
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { filename: string } }
-) {
-  const { filename } = params;
+export async function GET(req: NextRequest, context: Context) {
+  const { filename } = await context.params;
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
@@ -40,16 +41,18 @@ export async function GET(
 
     const stream = bucket.openDownloadStreamByName(filename);
 
-    return new Response(new ReadableStream({
-      start(controller) {
-        stream.on("data", (chunk) => controller.enqueue(chunk));
-        stream.on("end", () => controller.close());
-        stream.on("error", (err) => controller.error(err));
-      },
-    }), {
-      headers: { "Content-Type": file.contentType || "image/jpeg" },
-    });
-
+    return new Response(
+      new ReadableStream({
+        start(controller) {
+          stream.on("data", (chunk) => controller.enqueue(chunk));
+          stream.on("end", () => controller.close());
+          stream.on("error", (err) => controller.error(err));
+        },
+      }),
+      {
+        headers: { "Content-Type": file.contentType || "image/jpeg" },
+      }
+    );
   } catch (error) {
     console.error("❌ Error fetching image:", error);
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
@@ -87,19 +90,24 @@ export async function POST(req: NextRequest) {
           if (done) break;
           yield value;
         }
-      }
+      },
     });
-    
-    const uploadStream = bucket.openUploadStream(file.name, { contentType: file.type });
+
+    const uploadStream = bucket.openUploadStream(file.name, {
+      contentType: file.type,
+    });
 
     await new Promise<void>((resolve, reject) => {
       fileStream.pipe(uploadStream).on("error", reject).on("finish", resolve);
     });
 
-    return NextResponse.json({ 
-      message: "Upload thành công!", 
-      filename: file.name 
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: "Upload thành công!",
+        filename: file.name,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("❌ Error uploading image:", error);
     return NextResponse.json({ error: "Error uploading image" }, { status: 500 });
