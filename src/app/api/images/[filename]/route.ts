@@ -4,11 +4,9 @@ import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { Readable } from "stream";
 
-interface Context {
-  params: Promise<{ filename: string }>;
-}
-export async function GET(req: NextRequest, context: Context) {
-  const { filename } = await context.params;
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const filename = url.pathname.split("/").pop();
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
@@ -56,6 +54,8 @@ export async function GET(req: NextRequest, context: Context) {
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
   }
 }
+
+// POST handler for uploading images to MongoDB GridFS
 export async function POST(req: NextRequest) {
   await connectDB();
 
