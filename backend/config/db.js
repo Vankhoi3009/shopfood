@@ -5,7 +5,9 @@ import bcrypt from "bcryptjs";
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/";
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/";
 
 const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) {
@@ -14,10 +16,7 @@ const connectDB = async () => {
   }
 
   try {
-    await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(MONGO_URI); // Loại bỏ các options không cần thiết
     console.log("✅ MongoDB Connected Successfully!");
 
     const db = mongoose.connection.db;
@@ -50,7 +49,7 @@ const connectDB = async () => {
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error);
     process.exit(1);
-  } 
+  }
 };
 
 export default connectDB;
