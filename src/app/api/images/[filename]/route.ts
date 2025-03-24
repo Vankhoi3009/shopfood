@@ -7,8 +7,6 @@ import { Readable } from "stream";
 interface Context {
   params: Promise<{ filename: string }>;
 }
-
-// Correctly typed params for Next.js App Router
 export async function GET(req: NextRequest, context: Context) {
   const { filename } = await context.params;
 
@@ -58,8 +56,6 @@ export async function GET(req: NextRequest, context: Context) {
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
   }
 }
-
-// POST handler for uploading images to MongoDB GridFS
 export async function POST(req: NextRequest) {
   await connectDB();
 
