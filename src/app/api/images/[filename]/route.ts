@@ -1,12 +1,13 @@
 import { NextResponse, NextRequest } from "next/server";
 import connectDB from "@backend/config/db";
-import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
+import mongoose from "mongoose";
 import { Readable } from "stream";
 
 interface Context {
   params: Promise<{ filename: string }>;
 }
+
 export async function GET(req: NextRequest, context: Context) {
   const { filename } = await context.params;
 
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest, context: Context) {
     return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
   }
 }
+
 export async function POST(req: NextRequest) {
   await connectDB();
 
