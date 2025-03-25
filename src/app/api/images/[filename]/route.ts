@@ -4,12 +4,8 @@ import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { Readable } from "stream";
 
-interface Context {
-  params: Promise<{ filename: string }>;
-}
-
-export async function GET(req: NextRequest, context: Context) {
-  const { filename } = await context.params;
+export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
+  const { filename } = params;
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
@@ -22,15 +18,16 @@ export async function GET(req: NextRequest, context: Context) {
     return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
   }
 
-  const db = mongoose.connection.db;
-  if (!db) {
-    console.error("❌ Database not found");
-    return NextResponse.json({ error: "Database not found" }, { status: 500 });
-  }
-
-  const bucket = new GridFSBucket(db, { bucketName: "uploads" });
-
   try {
+    // Get the native MongoDB client
+    const client = mongoose.connection.getClient();
+    
+    // Use the database name from the connection or a default
+    const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
+    const db = client.db(dbName);
+
+    const bucket = new GridFSBucket(db, { bucketName: "uploads" });
+
     const file = await db.collection("uploads.files").findOne({ filename });
 
     if (!file) {
@@ -65,14 +62,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
   }
 
-  const db = mongoose.connection.db;
-  if (!db) {
-    return NextResponse.json({ error: "Database not found" }, { status: 500 });
-  }
-
-  const bucket = new GridFSBucket(db, { bucketName: "uploads" });
-
   try {
+    // Get the native MongoDB client
+    const client = mongoose.connection.getClient();
+    
+    // Use the database name from the connection or a default
+    const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
+    const db = client.db(dbName);
+
+    const bucket = new GridFSBucket(db, { bucketName: "uploads" });
+
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
