@@ -10,13 +10,15 @@ const MONGO_URI =
   "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/";
 
 const connectDB = async () => {
+  // Kiểm tra kết nối đã tồn tại chưa
   if (mongoose.connection.readyState >= 1) {
     console.log("✅ MongoDB already connected!");
     return mongoose.connection.db;
   }
 
   try {
-    await mongoose.connect(MONGO_URI); // Loại bỏ các options không cần thiết
+    // Kết nối đến MongoDB
+    await mongoose.connect(MONGO_URI);
     console.log("✅ MongoDB Connected Successfully!");
 
     const db = mongoose.connection.db;
@@ -25,20 +27,25 @@ const connectDB = async () => {
       return null;
     }
 
-    // Kiểm tra và tạo tài khoản admin mặc định nếu chưa tồn tại
+    // Quy trình tạo tài khoản admin mặc định
     const adminEmail = "admin@shopfood.com";
-    const adminPassword = "Admin@123"; // Thay đổi nếu cần
+    const adminPassword = "Admin@123";
+    
     const existingAdmin = await User.findOne({ email: adminEmail });
-
+    
     if (!existingAdmin) {
+      // Mã hóa mật khẩu
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      
+      // Tạo tài khoản admin mới
       const newAdmin = new User({
         name: "Admin ShopFood",
         email: adminEmail,
         password: hashedPassword,
         role: "admin",
       });
-
+      
+      // Lưu tài khoản admin
       await newAdmin.save();
       console.log("🔹 Tài khoản admin mặc định đã được tạo!");
     } else {
