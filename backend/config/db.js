@@ -8,7 +8,7 @@ dotenv.config();
 
 console.log("🔍 MONGO_URI from .env:", process.env.MONGO_URI);
 
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.NEXT_PUBLIC_MONGO_URI;
 
 const connectDB = async () => {
   if (!MONGO_URI) {
