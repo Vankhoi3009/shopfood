@@ -1,4 +1,4 @@
-import Image from "../models/Image.js"; // Kiểm tra đường dẫn đúng chưa
+import Image from "../models/Image"; // Kiểm tra đường dẫn đúng chưa
 
 export const getImages = async (req, res) => {
   try {
