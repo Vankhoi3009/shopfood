@@ -3,40 +3,35 @@ import dotenv from "dotenv";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
-// Load biến môi trường ngay khi file được chạy
 dotenv.config();
 
-console.log("🔍 MONGO_URI from .env:", process.env.MONGO_URI);
-
-const MONGO_URI = process.env.NEXT_PUBLIC_MONGO_URI;
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/";
 
 const connectDB = async () => {
-  if (!MONGO_URI) {
-    console.error("❌ MONGO_URI không tồn tại! Kiểm tra lại file .env.");
-    process.exit(1);
-  }
-
   if (mongoose.connection.readyState >= 1) {
-    console.log("✅ MongoDB đã kết nối trước đó!");
+    console.log("✅ MongoDB already connected!");
     return mongoose.connection.db;
   }
 
   try {
-    await mongoose.connect(MONGO_URI);
-    console.log("✅ Kết nối MongoDB thành công!");
+    await mongoose.connect(MONGO_URI); // Loại bỏ các options không cần thiết
+    console.log("✅ MongoDB Connected Successfully!");
 
     const db = mongoose.connection.db;
     if (!db) {
-      console.error("❌ Lỗi: Database không thể kết nối.");
+      console.error("❌ Database connection failed.");
       return null;
     }
 
-    // Tạo admin nếu chưa có
+    // Kiểm tra và tạo tài khoản admin mặc định nếu chưa tồn tại
     const adminEmail = "admin@shopfood.com";
+    const adminPassword = "Admin@123"; // Thay đổi nếu cần
     const existingAdmin = await User.findOne({ email: adminEmail });
 
     if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash("Admin@123", 10);
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       const newAdmin = new User({
         name: "Admin ShopFood",
         email: adminEmail,
@@ -45,14 +40,14 @@ const connectDB = async () => {
       });
 
       await newAdmin.save();
-      console.log("🔹 Tạo tài khoản admin mặc định!");
+      console.log("🔹 Tài khoản admin mặc định đã được tạo!");
     } else {
       console.log("🔹 Admin mặc định đã tồn tại!");
     }
 
     return db;
   } catch (error) {
-    console.error("❌ Lỗi kết nối MongoDB:", error);
+    console.error("❌ MongoDB Connection Error:", error);
     process.exit(1);
   }
 };
