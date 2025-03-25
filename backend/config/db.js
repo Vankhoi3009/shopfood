@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 // Load biến môi trường ngay khi file được chạy
 dotenv.config();
 
-console.log("🔍 MONGO_URI from .env:", process.env.MONGO_URI); // Debug xem biến có được đọc không
+console.log("🔍 MONGO_URI from .env:", process.env.MONGO_URI);
 
 const MONGO_URI = process.env.MONGO_URI;
 
