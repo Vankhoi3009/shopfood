@@ -6,12 +6,11 @@ import cors from "cors";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import adminRoutes from "./routes/admin.js";
-import imageRoutes from "./routes/images.js";
-app.use("/api/images", imageRoutes);
+import imageRoutes from "./routes/Image.js";
 
 
 const app = express();
-
+app.use("/api/images", imageRoutes);
 // Middleware
 app.use(cors());
 app.use(express.json());
