@@ -1,15 +1,19 @@
+import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { check, validationResult } from "express-validator";
 
+const router = express.Router();
+
 // Middleware kiểm tra dữ liệu đầu vào
-export const validateRegister = [
+const validateRegister = [
   check("name", "Tên không được để trống").notEmpty(),
   check("email", "Email không hợp lệ").isEmail(),
-  check("password", "Mật khẩu phải ít nhất 6 ký tự").isLength({ min: 6 }),
+  check("password", "Mật khẩu phải ít nhất 6 ký tự").isLength({ min: 1 }),
 ];
 
-export const register = async (req, res) => {
+// API Đăng ký người dùng
+router.post("/register", validateRegister, async (req, res) => {
   try {
     // Kiểm tra lỗi validation
     const errors = validationResult(req);
@@ -40,4 +44,6 @@ export const register = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Lỗi server", error: err.message });
   }
-};
+});
+
+export default router;
