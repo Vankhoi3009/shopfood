@@ -14,7 +14,7 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ error: "Failed to get database instance" }, { status: 500 });
     }
 
-    const bucket = new GridFSBucket(db as Db, { bucketName: "uploads" });
+    const bucket = new GridFSBucket(db as unknown as Db, { bucketName: "uploads" });
 
     const form = await req.formData();
     const file = form.get("file") as File;
