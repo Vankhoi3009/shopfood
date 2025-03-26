@@ -22,7 +22,7 @@ export async function GET(
 
   try {
     // Lấy client MongoDB trực tiếp
-    const client = mongoose.connection.getClient() as MongoClient;
+    const client = mongoose.connection.getClient() as unknown as MongoClient;
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
     
     // Lấy database
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const client = mongoose.connection.getClient() as MongoClient;
+    const client = mongoose.connection.getClient() as unknown as MongoClient;
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
     const db = client.db(dbName) as Db;
 
