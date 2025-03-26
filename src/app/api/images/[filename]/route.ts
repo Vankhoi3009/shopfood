@@ -4,17 +4,11 @@ import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { Readable } from "stream";
 
-type Params = {
-  params: {
-    filename: string;
-  };
-};
-
 export async function GET(
   request: NextRequest, 
-  { params }: Params
+  context: { params: { filename: string } }
 ) {
-  const { filename } = params;
+  const { filename } = context.params;
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
