@@ -5,7 +5,6 @@ import connectDB from "@backend/config/db";
 
 export async function POST(req: NextRequest) {
   try {
-    // Kết nối database
     await connectDB();
     const db = mongoose.connection.db;
 
@@ -13,10 +12,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
-    // Tạo GridFS bucket
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
 
-    // Lấy form data
     const form = await req.formData();
     const file = form.get("file") as File;
 
@@ -24,7 +21,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // Chuyển đổi file thành buffer
     const fileBuffer = Buffer.from(await file.arrayBuffer());
 
     return new Promise<Response>((resolve, reject) => {
