@@ -1,14 +1,13 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
 import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { Readable } from "stream";
 
 export async function GET(
-  request: NextRequest, 
-  context: { params: { filename: string } }
+  request: NextRequest
 ) {
-  const { filename } = context.params;
+  const filename = request.nextUrl.pathname.split('/').pop() || '';
 
   if (!filename) {
     return NextResponse.json({ error: "Filename is required" }, { status: 400 });
@@ -22,10 +21,7 @@ export async function GET(
   }
 
   try {
-    // Get the native MongoDB client
     const client = mongoose.connection.getClient();
-    
-    // Use the database name from the connection or a default
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
     const db = client.db(dbName);
 
@@ -49,7 +45,10 @@ export async function GET(
         },
       }),
       {
-        headers: { "Content-Type": file.contentType || "image/jpeg" },
+        headers: { 
+          "Content-Type": file.contentType || "image/jpeg",
+          "Cache-Control": "public, max-age=86400" // Thêm cache control
+        },
       }
     );
   } catch (error) {
@@ -66,10 +65,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Get the native MongoDB client
     const client = mongoose.connection.getClient();
-    
-    // Use the database name from the connection or a default
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
     const db = client.db(dbName);
 
