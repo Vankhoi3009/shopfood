@@ -4,30 +4,30 @@ import mongoose from "mongoose";
 
 export const GET = async () => {
   try {
-    // Establish database connection
+    // Kết nối database
     await connectDB();
 
-    // Check if MongoDB connection is successful
+    // Kiểm tra kết nối MongoDB
     if (mongoose.connection.readyState !== 1) {
       return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
     }
 
-    // Get the database connection
-    const db = mongoose.connection.db;
-
-    // Verify database connection exists
-    if (!db) {
-      return NextResponse.json({ error: "Database not found" }, { status: 500 });
-    }
+    // Lấy client MongoDB
+    const client = mongoose.connection.getClient();
+    const dbName = mongoose.connection.db?.databaseName || 'test';
+    const db = client.db(dbName);
 
     // Fetch all files from the uploads.files collection
-    const files = await db.collection("uploads.files").find().toArray();
+    const files = await db.collection("uploads.files").find({}).toArray();
 
     // Return the files as JSON response
     return NextResponse.json(files);
   } catch (error) {
-    // Handle any errors during the process
+    // Ghi log chi tiết lỗi
     console.error("Error fetching images:", error);
-    return NextResponse.json({ error: "Failed to fetch images" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Failed to fetch images", 
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 });
   }
 };
