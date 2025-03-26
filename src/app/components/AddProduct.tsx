@@ -96,8 +96,8 @@ export default function AddProduct() {
       <select className="border p-2 w-full mb-3" onChange={(e) => setSelectedImage(e.target.value)}>
         <option value="">Chọn ảnh</option>
         {images.length > 0 ? (
-          images.map((img) => (
-            <option key={img._id} value={img.filename}>
+          images.map((img, index) => (
+            <option key={img._id || index} value={img.filename}>
               {img.filename}
             </option>
           ))
