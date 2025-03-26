@@ -5,9 +5,8 @@ import bcrypt from "bcryptjs";
 
 dotenv.config();
 
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/shopfood";
+
 
 const connectDB = async () => {
   // Kiểm tra kết nối đã tồn tại chưa
