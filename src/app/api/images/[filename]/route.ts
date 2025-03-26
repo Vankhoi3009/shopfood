@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
-import { GridFSBucket } from "mongodb";
+import { GridFSBucket, Db, MongoClient } from 'mongodb';
 import mongoose from "mongoose";
 import { Readable } from "stream";
 
@@ -21,10 +21,14 @@ export async function GET(
   }
 
   try {
-    const client = mongoose.connection.getClient();
+    // Lấy client MongoDB trực tiếp
+    const client = mongoose.connection.getClient() as MongoClient;
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
-    const db = client.db(dbName);
+    
+    // Lấy database
+    const db = client.db(dbName) as Db;
 
+    // Tạo GridFSBucket 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
 
     const file = await db.collection("uploads.files").findOne({ filename });
@@ -47,7 +51,7 @@ export async function GET(
       {
         headers: { 
           "Content-Type": file.contentType || "image/jpeg",
-          "Cache-Control": "public, max-age=86400" // Thêm cache control
+          "Cache-Control": "public, max-age=86400"
         },
       }
     );
@@ -65,9 +69,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const client = mongoose.connection.getClient();
+    const client = mongoose.connection.getClient() as MongoClient;
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || 'test';
-    const db = client.db(dbName);
+    const db = client.db(dbName) as Db;
 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
 
