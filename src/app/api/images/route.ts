@@ -17,6 +17,7 @@ export async function GET() {
     const images = files.map(file => ({
       filename: file.filename,
       contentType: file.metadata?.contentType || "image/jpeg",
+      url: `/api/images/${encodeURIComponent(file.filename)}`, // Thêm URL của ảnh
     }));
 
     return NextResponse.json(images);
