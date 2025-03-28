@@ -1,42 +1,49 @@
-// src/backend/config/db.ts
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+dotenv.config();
 
-if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI is not defined');
-  throw new Error('Please define the MONGODB_URI environment variable');
-}
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/test?retryWrites=true&w=majority";
 
-async function connectDB() {
-  try {
-    // Check if already connected to avoid multiple connections
-    if (mongoose.connection.readyState === 1) {
-      console.log('✅ Already connected to MongoDB');
-      return mongoose.connection;
-    }
 
-    // Connect with more robust options
-    const conn = await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-      family: 4 // Use IPv4, skip trying IPv6
-    });
-
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    return conn.connection;
-  } catch (error) {
-    console.error('❌ MongoDB Connection Error:', error);
-    
-    // More detailed error logging
-    if (error instanceof Error) {
-      console.error('Error Name:', error.name);
-      console.error('Error Message:', error.message);
-    }
-
-    // Rethrow to ensure calling functions know connection failed
-    throw error;
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    console.log("✅ MongoDB already connected!");
+    return mongoose.connection.db;
   }
-}
+
+  try {
+    await mongoose.connect(MONGO_URI);
+    console.log("✅ MongoDB Connected Successfully!");
+
+    const db = mongoose.connection.db;
+    if (!db) {
+      console.error("❌ Database connection failed.");
+      return null;
+    }
+    const adminEmail = "admin@shopfood.com";
+    const adminPassword = "Admin@123";
+    const existingAdmin = await User.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      const newAdmin = new User({
+        name: "Admin ShopFood",
+        email: adminEmail,
+        password: hashedPassword,
+        role: "admin",
+      });
+      await newAdmin.save();
+      console.log("🔹 Tài khoản admin mặc định đã được tạo!");
+    } else {
+      console.log("🔹 Admin mặc định đã tồn tại!");
+    }
+
+    return db;
+  } catch (error) {
+    console.error("❌ MongoDB Connection Error:", error);
+  }
+};
 
 export default connectDB;
