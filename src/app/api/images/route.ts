@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
-import connectDB from "@backend/config/db"; 
-import mongoose from "mongoose";
+import connectDB from "@backend/config/db";
+// import mongoose from "mongoose";
 
-export async function GET() { 
-  try { 
-    await connectDB();
-    
-    const db = mongoose.connection.db;
+export async function GET() {
+  try {
+    const db = await connectDB();
     if (!db) {
-      return NextResponse.json({ error: "Database not selected" }, { status: 500 });
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
     const files = await db.collection("uploads.files").find({}).toArray();
-
-    if (!files?.length) {
+    if (!files.length) {
       return NextResponse.json({ error: "No images found" }, { status: 404 });
     }
 
@@ -23,12 +20,11 @@ export async function GET() {
     }));
 
     return NextResponse.json(images);
-  } catch (error) { 
-    console.error('❌ Unexpected error:', error);
-    
-    return NextResponse.json({
-      error: "Failed to fetch images",
+  } catch (error) {
+    console.error("❌ Error fetching images:", error);
+    return NextResponse.json({ 
+      error: "Failed to fetch images", 
       details: error instanceof Error ? error.message : String(error),
-    }, { status: 500 }); 
-  } 
+    }, { status: 500 });
+  }
 }

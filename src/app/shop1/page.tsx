@@ -145,6 +145,7 @@ export default function Home() {
                         height={300}
                         loading="lazy"
                         className="product-image"
+                        // priority 
                       />
 
                       <h3 className="text-blue-500 hover:underline">{product.name}</h3>

@@ -53,6 +53,7 @@ export default function ProductList() {
                     width={48}
                     height={48}
                     className="object-cover rounded"
+                    priority 
                   />
 
                 )}

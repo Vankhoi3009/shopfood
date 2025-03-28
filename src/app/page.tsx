@@ -77,6 +77,7 @@ export default function Home() {
                   alt={product.name}
                   width={200}
                   height={200}
+                  priority 
                 />
                 <h3>{product.name}</h3>
               </Link>
@@ -101,6 +102,7 @@ export default function Home() {
                   alt={product.name}
                   width={200}
                   height={200}
+                  priority 
                 />
                 <h3>{product.name}</h3>
               </Link>
