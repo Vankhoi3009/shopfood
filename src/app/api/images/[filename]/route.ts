@@ -22,13 +22,23 @@ export async function GET(request: Request) {
     } 
  
     // Kết nối database 
-    const client = mongoose.connection.getClient() as MongoClient; 
-    const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || "test"; 
-    const db = client.db(dbName); 
+    const connection = mongoose.connection;
+    const dbName = connection.db?.databaseName || connection.name || "test";
+    
+    // Create a new MongoClient instance using mongoose's connection string
+    const mongoUri = process.env.MONGODB_URI;
+    if (!mongoUri) {
+      return NextResponse.json({ error: "Database connection URI not found" }, { status: 500 });
+    }
+
+    const client = new MongoClient(mongoUri);
+    await client.connect();
+    const db = client.db(dbName);
  
     // Kiểm tra file tồn tại 
     const file = await db.collection("uploads.files").findOne({ filename }); 
     if (!file) { 
+      await client.close();
       return NextResponse.json({ error: "File not found" }, { status: 404 }); 
     } 
  
@@ -40,8 +50,14 @@ export async function GET(request: Request) {
     const readableStream = new ReadableStream({ 
       start(controller) { 
         downloadStream.on("data", (chunk) => controller.enqueue(chunk)); 
-        downloadStream.on("end", () => controller.close()); 
-        downloadStream.on("error", (err) => controller.error(err)); 
+        downloadStream.on("end", () => {
+          controller.close();
+          client.close(); // Ensure client is closed
+        });
+        downloadStream.on("error", (err) => {
+          controller.error(err);
+          client.close(); // Ensure client is closed on error
+        }); 
       }, 
     }); 
  
