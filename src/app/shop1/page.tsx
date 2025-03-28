@@ -132,9 +132,8 @@ export default function Home() {
             ) : (
               filteredProducts.map((product) => {
                 const imageUrl = product.image
-                ? `/api/images?filename=${(product.image)}`
+                ? `/api/images/${encodeURIComponent(product.image)}`
                 : "/images/default-product.jpg";
-
                 return (
                   <Link key={product._id} href={`/Showproduct/${product._id}`} className="product">
                     <div className="cursor-pointer">

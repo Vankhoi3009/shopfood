@@ -1,32 +1,53 @@
 import { NextResponse } from "next/server";
-import connectDB from "@backend/config/db"
+import connectDB from "@backend/config/db";
+import { MongoClient, GridFSBucket } from "mongodb";
+import mongoose from "mongoose";
 
-export const GET = async () => {
+export const GET = async (req: Request, { params }: { params: { filename: string } }) => {
   try {
-    const db = await connectDB();
-    if (!db) {
+    await connectDB();
+    if (mongoose.connection.readyState !== 1) {
+      console.error("❌ MongoDB connection failed");
       return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
     }
 
-    // Lấy danh sách file từ GridFS
-    const files = await db.collection("uploads.files").find({}).toArray();
-
-    if (!files || files.length === 0) {
-      return NextResponse.json({ error: "No images found" }, { status: 404 });
+    const { filename } = params;
+    if (!filename) {
+      return NextResponse.json({ error: "Filename is required" }, { status: 400 });
     }
 
-    // Tạo danh sách ảnh
-    const images = files.map(file => ({
-      filename: file.filename,
-      contentType: file.metadata?.contentType || "image/jpeg",
-    }));
+    // Kết nối database
+    const client = mongoose.connection.getClient() as MongoClient;
+    const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || "test";
+    const db = client.db(dbName);
 
-    return NextResponse.json(images);
+    // Kiểm tra file tồn tại
+    const file = await db.collection("uploads.files").findOne({ filename });
+    if (!file) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+
+    // Lấy ảnh từ GridFS
+    const bucket = new GridFSBucket(db, { bucketName: "uploads" });
+    const downloadStream = bucket.openDownloadStreamByName(filename);
+
+    // Chuyển đổi stream thành ReadableStream cho Next.js
+    const readableStream = new ReadableStream({
+      start(controller) {
+        downloadStream.on("data", (chunk) => controller.enqueue(chunk));
+        downloadStream.on("end", () => controller.close());
+        downloadStream.on("error", (err) => controller.error(err));
+      },
+    });
+
+    return new Response(readableStream, {
+      headers: {
+        "Content-Type": file.metadata?.contentType || "image/jpeg",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
   } catch (error) {
-    console.error("❌ Error fetching images:", error);
-    return NextResponse.json({
-      error: "Failed to fetch images",
-      details: error instanceof Error ? error.message : String(error),
-    }, { status: 500 });
+    console.error("❌ Error fetching image:", error);
+    return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 });
   }
 };

@@ -1,61 +1,54 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
-import { GridFSBucket, Db, MongoClient } from "mongodb";
+import { MongoClient, GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 
-export async function GET(request: NextRequest) {
+export const GET = async (req: Request, { params }: { params: { filename: string } }) => {
   try {
-    // Lấy filename từ URL, giải mã & chuẩn hóa
-    const { searchParams } = new URL(request.url);
-    let filename = searchParams.get("filename");
-
-    if (!filename) {
-      return NextResponse.json({ error: "Filename is required" }, { status: 400 });
-    }
-
-    filename = decodeURIComponent(filename).trim();
-
-    // Kết nối MongoDB
     await connectDB();
     if (mongoose.connection.readyState !== 1) {
       console.error("❌ MongoDB connection failed");
       return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
     }
 
-    // Lấy database từ Mongoose
-    const client = mongoose.connection.getClient() as unknown as MongoClient;
-    const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || "test";
-    const db = client.db(dbName) as Db;
-    const bucket = new GridFSBucket(db, { bucketName: "uploads" });
+    // Lấy filename từ params
+    const { filename } = params;
+    if (!filename) {
+      return NextResponse.json({ error: "Filename is required" }, { status: 400 });
+    }
 
-    // Kiểm tra file trong GridFS
+    // Kết nối đến database
+    const client = mongoose.connection.getClient() as MongoClient;
+    const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name || "test";
+    const db = client.db(dbName);
+
+    // Kiểm tra file có tồn tại không
     const file = await db.collection("uploads.files").findOne({ filename });
     if (!file) {
-      console.error(`❌ File not found: ${filename}`);
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
-    // Tạo stream đọc file từ GridFS
-    const stream = bucket.openDownloadStreamByName(filename);
+    // Tạo GridFSBucket và mở stream đọc file
+    const bucket = new GridFSBucket(db, { bucketName: "uploads" });
+    const downloadStream = bucket.openDownloadStreamByName(filename);
 
-    // Chuyển đổi stream thành ReadableStream (dùng trong Next.js)
+    // Chuyển đổi GridFSBucketReadStream thành ReadableStream
     const readableStream = new ReadableStream({
       start(controller) {
-        stream.on("data", (chunk) => controller.enqueue(chunk));
-        stream.on("end", () => controller.close());
-        stream.on("error", (err) => controller.error(err));
+        downloadStream.on("data", (chunk) => controller.enqueue(chunk));
+        downloadStream.on("end", () => controller.close());
+        downloadStream.on("error", (err) => controller.error(err));
       },
     });
 
     return new Response(readableStream, {
       headers: {
         "Content-Type": file.metadata?.contentType || "image/jpeg",
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": "public, max-age=31536000, immutable",
       },
     });
-
   } catch (error) {
     console.error("❌ Error fetching image:", error);
-    return NextResponse.json({ error: "Error fetching image" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 });
   }
-}
+};
