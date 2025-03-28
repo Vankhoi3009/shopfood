@@ -3,7 +3,10 @@ import connectDB from "@backend/config/db";
 import { MongoClient, GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 
-export const GET = async (req: Request, { params }: { params: { filename: string } }) => {
+export async function GET(
+  request: Request,
+  { params }: { params: { filename: string } }
+) {
   try {
     await connectDB();
     if (mongoose.connection.readyState !== 1) {
@@ -50,4 +53,4 @@ export const GET = async (req: Request, { params }: { params: { filename: string
     console.error("❌ Error fetching image:", error);
     return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 });
   }
-};
+}
