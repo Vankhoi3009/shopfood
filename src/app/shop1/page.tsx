@@ -132,8 +132,8 @@ export default function Home() {
             ) : (
               filteredProducts.map((product) => {
                 const imageUrl = product.image
-                  ? `/api/images/${product.image}`
-                  : "/images/default-product.jpg"; // Ảnh mặc định
+                ? `/api/images?filename=${encodeURIComponent(product.image)}`
+                : "/images/default-product.jpg";
 
                 return (
                   <Link key={product._id} href={`/Showproduct/${product._id}`} className="product">
@@ -147,6 +147,7 @@ export default function Home() {
                         loading="lazy"
                         className="product-image"
                       />
+
                       <h3 className="text-blue-500 hover:underline">{product.name}</h3>
                     </div>
                   </Link>
