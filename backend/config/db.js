@@ -5,8 +5,9 @@ import bcrypt from "bcryptjs";
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/test?retryWrites=true&w=majority";
-
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/test?retryWrites=true&w=majority";
 
 const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) {
@@ -15,17 +16,25 @@ const connectDB = async () => {
   }
 
   try {
-    await mongoose.connect(MONGO_URI);
-    console.log("✅ MongoDB Connected Successfully!");
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      dbName: "test", // 👈 Thêm dbName vào đây
+    });
 
+    console.log("✅ MongoDB Connected Successfully!");
+    
     const db = mongoose.connection.db;
     if (!db) {
       console.error("❌ Database connection failed.");
       return null;
     }
+
+    // Kiểm tra & tạo admin nếu chưa có
     const adminEmail = "admin@shopfood.com";
     const adminPassword = "Admin@123";
     const existingAdmin = await User.findOne({ email: adminEmail });
+
     if (!existingAdmin) {
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
       const newAdmin = new User({
