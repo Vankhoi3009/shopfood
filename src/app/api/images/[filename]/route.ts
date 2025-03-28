@@ -4,6 +4,7 @@ import { MongoClient, GridFSBucket } from "mongodb";
 import mongoose from "mongoose"; 
 
 export async function GET(request: Request) { 
+  await connectDB();
   const url = new URL(request.url);
   const pathname = url.pathname;
   const filename = decodeURIComponent(pathname.split('/').pop() || '');
