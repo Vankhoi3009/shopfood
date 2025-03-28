@@ -48,7 +48,7 @@ export default function ProductList() {
               <div className="flex items-center gap-4">
                 {product.image && (
                   <Image
-                    src={`/api/images?filename=${encodeURIComponent(product.image)}`}
+                    src={`/api/images?filename=${(product.image)}`}
                     alt={product.name}
                     width={48}
                     height={48}

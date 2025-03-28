@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
     }
 
     filename = decodeURIComponent(filename).trim();
-    filename = filename.normalize("NFC");
 
     // Kết nối MongoDB
     await connectDB();

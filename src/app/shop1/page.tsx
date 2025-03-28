@@ -132,7 +132,7 @@ export default function Home() {
             ) : (
               filteredProducts.map((product) => {
                 const imageUrl = product.image
-                ? `/api/images?filename=${encodeURIComponent(product.image)}`
+                ? `/api/images?filename=${(product.image)}`
                 : "/images/default-product.jpg";
 
                 return (
