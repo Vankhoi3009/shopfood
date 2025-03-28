@@ -52,7 +52,6 @@ export async function GET(request: NextRequest) {
       headers: {
         "Content-Type": file.metadata?.contentType || "image/jpeg",
         "Cache-Control": "public, max-age=86400",
-        "Content-Disposition": `inline; filename=\"${filename}\"`,
       },
     });
 
