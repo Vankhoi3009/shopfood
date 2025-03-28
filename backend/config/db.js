@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://UresDB:khoi12345@cluster0.npwrc.mongodb.net/test?retryWrites=true&w=majority";
 
 
 const connectDB = async () => {
