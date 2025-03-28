@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Filename is required" }, { status: 400 });
     }
 
-    filename = decodeURIComponent(filename).trim(); // Giải mã & loại bỏ khoảng trắng thừa
+    filename = decodeURIComponent(filename).trim();
+    filename = filename.normalize("NFC");
 
     // Kết nối MongoDB
     await connectDB();
@@ -51,6 +52,7 @@ export async function GET(request: NextRequest) {
       headers: {
         "Content-Type": file.metadata?.contentType || "image/jpeg",
         "Cache-Control": "public, max-age=86400",
+        "Content-Disposition": `inline; filename=\"${filename}\"`,
       },
     });
 
