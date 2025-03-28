@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const pathname = url.pathname;
   const filename = pathname.split('/').pop();
 
-  if (!filename) { 
+  if (!filename) {  
     return NextResponse.json({ error: "Filename is required" }, { status: 400 }); 
   }
   
