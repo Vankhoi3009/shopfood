@@ -3,9 +3,9 @@ import connectDB from "@backend/config/db";
 import { MongoClient, GridFSBucket } from "mongodb"; 
 import mongoose from "mongoose"; 
 
-export async function GET( 
-  request: NextRequest, 
-  { params }: { params: { filename: string } } 
+export async function GET(
+  request: NextRequest,
+  context: { params: { filename: string } }
 ) { 
   try { 
     // Kết nối MongoDB 
@@ -16,7 +16,7 @@ export async function GET(
     } 
  
     // Kiểm tra tham số filename 
-    const { filename } = params; 
+    const { filename } = context.params; 
     if (!filename) { 
       return NextResponse.json({ error: "Filename is required" }, { status: 400 }); 
     } 
