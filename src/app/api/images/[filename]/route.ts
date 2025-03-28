@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { filename: string } }
+  { params }: { params: { filename: string } }
 ) { 
   try { 
     // Kết nối MongoDB 
@@ -16,7 +16,7 @@ export async function GET(
     } 
  
     // Kiểm tra tham số filename 
-    const { filename } = context.params; 
+    const { filename } = params; 
     if (!filename) { 
       return NextResponse.json({ error: "Filename is required" }, { status: 400 }); 
     } 

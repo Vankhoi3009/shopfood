@@ -1,11 +1,18 @@
 import { NextResponse } from "next/server";
-import connectDB from "@backend/config/db"
+import connectDB from "@backend/config/db";
+import mongoose from "mongoose";
 
-export const GET = async () => {
+export async function GET() {
   try {
-    const db = await connectDB();
-    if (!db) {
+    await connectDB();
+    
+    if (mongoose.connection.readyState !== 1) {
       return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 });
+    }
+
+    const db = mongoose.connection.db;
+    if (!db) {
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
     // Lấy danh sách file từ GridFS
@@ -29,4 +36,4 @@ export const GET = async () => {
       details: error instanceof Error ? error.message : String(error),
     }, { status: 500 });
   }
-};
+}
