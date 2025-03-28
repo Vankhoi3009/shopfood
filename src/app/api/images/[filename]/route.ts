@@ -4,59 +4,49 @@ import { MongoClient, GridFSBucket } from "mongodb";
 import mongoose from "mongoose"; 
 
 export async function GET(request: Request) { 
-  // Extract filename from URL
   const url = new URL(request.url);
   const pathname = url.pathname;
-  const filename = pathname.split('/').pop();
+  const filename = decodeURIComponent(pathname.split('/').pop() || '');
 
   if (!filename) {  
     return NextResponse.json({ error: "Filename is required" }, { status: 400 }); 
   }
   
+  let client: MongoClient | null = null;
+  
   try { 
-    // Kết nối MongoDB 
     await connectDB(); 
-    if (mongoose.connection.readyState !== 1) { 
-      console.error("❌ MongoDB connection failed"); 
-      return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 }); 
-    } 
- 
-    // Kết nối database 
-    const connection = mongoose.connection;
-    const dbName = connection.db?.databaseName || connection.name || "test";
     
-    // Create a new MongoClient instance using mongoose's connection string
     const mongoUri = process.env.MONGODB_URI;
     if (!mongoUri) {
       return NextResponse.json({ error: "Database connection URI not found" }, { status: 500 });
     }
 
-    const client = new MongoClient(mongoUri);
+    client = new MongoClient(mongoUri);
     await client.connect();
-    const db = client.db(dbName);
+    
+    const db = client.db(mongoose.connection.db?.databaseName || 'test');
  
-    // Kiểm tra file tồn tại 
     const file = await db.collection("uploads.files").findOne({ filename }); 
     if (!file) { 
       await client.close();
       return NextResponse.json({ error: "File not found" }, { status: 404 }); 
     } 
  
-    // Lấy ảnh từ GridFS 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" }); 
     const downloadStream = bucket.openDownloadStreamByName(filename); 
  
-    // Chuyển đổi stream thành ReadableStream cho Next.js 
     const readableStream = new ReadableStream({ 
       start(controller) { 
         downloadStream.on("data", (chunk) => controller.enqueue(chunk)); 
         downloadStream.on("end", () => {
           controller.close();
-          client.close(); // Ensure client is closed
+          client?.close(); 
         });
         downloadStream.on("error", (err) => {
+          console.error("Download Stream Error:", err);
           controller.error(err);
-          client.close(); // Ensure client is closed on error
+          client?.close(); 
         }); 
       }, 
     }); 
@@ -69,6 +59,10 @@ export async function GET(request: Request) {
     }); 
   } catch (error) { 
     console.error("❌ Error fetching image:", error); 
-    return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 }); 
+    client?.close();
+    return NextResponse.json({ 
+      error: "Failed to fetch image", 
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 }); 
   } 
 }
