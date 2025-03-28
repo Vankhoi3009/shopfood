@@ -1,24 +1,24 @@
-import { NextRequest, NextResponse } from "next/server"; 
+import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db"; 
 import { MongoClient, GridFSBucket } from "mongodb"; 
 import mongoose from "mongoose"; 
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { filename: string } }
-) { 
+export async function GET(request: Request) { 
+  // Extract filename from URL
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+  const filename = pathname.split('/').pop();
+
+  if (!filename) { 
+    return NextResponse.json({ error: "Filename is required" }, { status: 400 }); 
+  }
+  
   try { 
     // Kết nối MongoDB 
     await connectDB(); 
     if (mongoose.connection.readyState !== 1) { 
       console.error("❌ MongoDB connection failed"); 
       return NextResponse.json({ error: "MongoDB connection failed" }, { status: 500 }); 
-    } 
- 
-    // Kiểm tra tham số filename 
-    const { filename } = params; 
-    if (!filename) { 
-      return NextResponse.json({ error: "Filename is required" }, { status: 400 }); 
     } 
  
     // Kết nối database 
