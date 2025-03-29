@@ -1,20 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
-import { GridFSBucket, ObjectId } from "mongodb";
+import { GridFSBucket } from "mongodb";
 
 export async function GET(
-  request: Request,
-  context: { params: { filename: string } }
+  request: NextRequest,
+  { params }: { params: { filename: string } }
 ) {
-  const filename = decodeURIComponent(context.params.filename);
+  const filename = decodeURIComponent(params.filename);
 
   try {
     const db = await connectDB();
     if (!db) {
-      return NextResponse.json(
-        { error: "Database connection failed" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
     const file = await db.collection("uploads.files").findOne({ filename });
@@ -23,7 +20,7 @@ export async function GET(
     }
 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
-    const downloadStream = bucket.openDownloadStream(new ObjectId(file._id));
+    const downloadStream = bucket.openDownloadStream(file._id);
 
     const readableStream = new ReadableStream<Uint8Array>({
       start(controller) {
@@ -44,12 +41,9 @@ export async function GET(
     });
   } catch (error) {
     console.error("❌ Error fetching image:", error);
-    return NextResponse.json(
-      {
-        error: "Failed to fetch image",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      error: "Failed to fetch image",
+      details: error instanceof Error ? error.message : String(error),
+    }, { status: 500 });
   }
 }
