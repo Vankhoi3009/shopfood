@@ -14,14 +14,12 @@ export async function GET(
       return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
-    // Tìm file theo tên file thay vì ID
     const file = await db.collection("uploads.files").findOne({ filename: filename });
     if (!file) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
-    // Mở stream tải xuống dựa trên _id của file
     const downloadStream = bucket.openDownloadStream(file._id);
 
     const readableStream = new ReadableStream<Uint8Array>({
