@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
 import { GridFSBucket, ObjectId } from "mongodb";
 
-export async function GET(request: Request, context: { params: { id: string } }) {
+export async function GET(
+  request: Request,
+  context: { params: { id: string } }
+) {
   const fileId = context.params.id;
 
   if (!ObjectId.isValid(fileId)) {
