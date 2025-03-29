@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
-import { GridFSBucket } from "mongodb";
-// import mongoose from "mongoose";
+import { GridFSBucket, ObjectId } from "mongodb";
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const filename = decodeURIComponent(url.pathname.split('/').pop() || '');
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  const fileId = params.id;
 
-  if (!filename) {
-    return NextResponse.json({ error: "Filename is required" }, { status: 400 });
+  if (!ObjectId.isValid(fileId)) {
+    return NextResponse.json({ error: "Invalid image ID" }, { status: 400 });
   }
 
   try {
@@ -17,13 +15,13 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
-    const file = await db.collection("uploads.files").findOne({ filename });
+    const file = await db.collection("uploads.files").findOne({ _id: new ObjectId(fileId) });
     if (!file) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
-    const downloadStream = bucket.openDownloadStreamByName(filename);
+    const downloadStream = bucket.openDownloadStream(new ObjectId(fileId));
 
     const readableStream = new ReadableStream<Uint8Array>({
       start(controller) {

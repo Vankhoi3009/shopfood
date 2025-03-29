@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
-// import mongoose from "mongoose";
 
 export async function GET() {
   try {
@@ -15,9 +14,10 @@ export async function GET() {
     }
 
     const images = files.map(file => ({
+      id: file._id.toString(), // Chuyển _id thành string để dễ dùng
       filename: file.filename,
       contentType: file.metadata?.contentType || "image/jpeg",
-      url: `/api/images/${encodeURIComponent(file.filename)}`, // Thêm URL của ảnh
+      url: `/api/images/${file._id.toString()}`, // Dùng _id thay vì filename
     }));
 
     return NextResponse.json(images);
