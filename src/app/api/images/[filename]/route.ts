@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
 import { GridFSBucket } from "mongodb";
+// import mongoose from "mongoose";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { filename: string } }
-) {
-  const filename = decodeURIComponent(params.filename);
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const filename = decodeURIComponent(url.pathname.split('/').pop() || '');
+
+  if (!filename) {
+    return NextResponse.json({ error: "Filename is required" }, { status: 400 });
+  }
 
   try {
     const db = await connectDB();
@@ -20,7 +23,7 @@ export async function GET(
     }
 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
-    const downloadStream = bucket.openDownloadStream(file._id);
+    const downloadStream = bucket.openDownloadStreamByName(filename);
 
     const readableStream = new ReadableStream<Uint8Array>({
       start(controller) {
