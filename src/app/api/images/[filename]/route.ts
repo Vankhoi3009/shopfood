@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
-import { GridFSBucket, ObjectId } from "mongodb";
+import { GridFSBucket } from "mongodb";
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: { filename: string } }
 ) {
-  const fileId = context.params.id;
-
-  if (!ObjectId.isValid(fileId)) {
-    return NextResponse.json({ error: "Invalid image ID" }, { status: 400 });
-  }
+  const filename = context.params.filename;
 
   try {
     const db = await connectDB();
@@ -18,13 +14,15 @@ export async function GET(
       return NextResponse.json({ error: "Database connection failed" }, { status: 500 });
     }
 
-    const file = await db.collection("uploads.files").findOne({ _id: new ObjectId(fileId) });
+    // Tìm file theo tên file thay vì ID
+    const file = await db.collection("uploads.files").findOne({ filename: filename });
     if (!file) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
     const bucket = new GridFSBucket(db, { bucketName: "uploads" });
-    const downloadStream = bucket.openDownloadStream(new ObjectId(fileId));
+    // Mở stream tải xuống dựa trên _id của file
+    const downloadStream = bucket.openDownloadStream(file._id);
 
     const readableStream = new ReadableStream<Uint8Array>({
       start(controller) {

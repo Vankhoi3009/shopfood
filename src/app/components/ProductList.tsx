@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation"; // 🟢 Thay vì useRouter()
+import { usePathname } from "next/navigation";
 
 interface Product {
   _id: string;
@@ -11,8 +11,8 @@ interface Product {
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
-  const pathname = usePathname(); // 🟢 Lấy đường dẫn trang hiện tại
-  const isAdmin = pathname.startsWith("/admin"); // 🟢 Kiểm tra nếu là trang admin
+  const pathname = usePathname();
+  const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
     fetch("/api/products")
@@ -48,19 +48,17 @@ export default function ProductList() {
               <div className="flex items-center gap-4">
                 {product.image && (
                   <Image
-                    src={`/api/images?filename=${encodeURIComponent(product.image)}`}
+                    src={`/api/images/${encodeURIComponent(product.image)}`}
                     alt={product.name}
                     width={48}
                     height={48}
                     className="object-cover rounded"
                     priority 
                   />
-
                 )}
                 <span>{product.name}</span>
               </div>
 
-              {/* Chỉ hiển thị nút xóa nếu là admin */}
               {isAdmin && (
                 <button
                   className="bg-red-500 btn-delete-product text-white px-3 py-1 rounded hover:bg-red-700"

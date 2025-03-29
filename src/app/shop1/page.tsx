@@ -8,7 +8,7 @@ import Link from "next/link";
 import "@/styles/Shop1.css";
 import "@/styles/Base.css";
 
-// 🟢 Định nghĩa kiểu dữ liệu
+// Định nghĩa kiểu dữ liệu
 type Product = {
   _id: string;
   name: string;
@@ -29,7 +29,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 🟢 Lấy danh sách sản phẩm
+  // Lấy danh sách sản phẩm
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -47,7 +47,7 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  // 🟢 Lấy danh mục sản phẩm từ API
+  // Lấy danh mục sản phẩm từ API
   useEffect(() => {
     async function fetchCategories() {
       try {
@@ -63,7 +63,7 @@ export default function Home() {
     fetchCategories();
   }, []);
 
-  // 🟢 Áp dụng bộ lọc
+  // Áp dụng bộ lọc
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
@@ -84,7 +84,7 @@ export default function Home() {
           <aside className="sidebar">
             <h3>Bộ lọc</h3>
 
-            {/* 🟢 Lọc theo danh mục */}
+            {/* Lọc theo danh mục */}
             <div className="filter-group">
               <h4>Danh mục</h4>
               {categories.length === 0 ? (
@@ -108,7 +108,7 @@ export default function Home() {
               </button>
             </div>
 
-            {/* 🟢 Tìm kiếm sản phẩm */}
+            {/* Tìm kiếm sản phẩm */}
             <div className="filter-group">
               <h4>Tìm kiếm</h4>
               <input
@@ -121,7 +121,7 @@ export default function Home() {
             </div>
           </aside>
 
-          {/* 🟢 Danh sách sản phẩm */}
+          {/* Danh sách sản phẩm */}
           <section className="product-list" id="product-list">
             {loading ? (
               <p>Đang tải sản phẩm...</p>
@@ -131,13 +131,14 @@ export default function Home() {
               <p>Không có sản phẩm nào phù hợp.</p>
             ) : (
               filteredProducts.map((product) => {
+                // Sử dụng tên file cho đường dẫn và mã hóa để xử lý ký tự đặc biệt
                 const imageUrl = product.image
-                ? `/api/images/${encodeURIComponent(product.image)}`
-                : "/images/default-product.jpg";
+                  ? `/api/images/${encodeURIComponent(product.image)}`
+                  : "/images/default-product.jpg";
+                
                 return (
                   <Link key={product._id} href={`/Showproduct/${product._id}`} className="product">
                     <div className="cursor-pointer">
-                      {/* ✅ Sử dụng next/image để tối ưu ảnh */}
                       <Image
                         src={imageUrl}
                         alt={product.name}
@@ -145,9 +146,7 @@ export default function Home() {
                         height={300}
                         loading="lazy"
                         className="product-image"
-                        // priority 
                       />
-
                       <h3 className="text-blue-500 hover:underline">{product.name}</h3>
                     </div>
                   </Link>
@@ -157,7 +156,7 @@ export default function Home() {
           </section>
         </div>
 
-        {/* 🟢 Nút Xem thêm */}
+        {/* Nút Xem thêm */}
         <button className="btn-load-more" id="load-more">
           Xem thêm
         </button>
