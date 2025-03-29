@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
 import { GridFSBucket, ObjectId } from "mongodb";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const fileId = params.id;
+export async function GET(request: Request, context: { params: { id: string } }) {
+  const fileId = context.params.id;
 
   if (!ObjectId.isValid(fileId)) {
     return NextResponse.json({ error: "Invalid image ID" }, { status: 400 });
