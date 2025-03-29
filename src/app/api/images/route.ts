@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import connectDB from "@backend/config/db";
 
@@ -10,14 +11,15 @@ export async function GET() {
 
     const files = await db.collection("uploads.files").find({}).toArray();
     if (!files.length) {
-      return NextResponse.json({ error: "No images found" }, { status: 404 });
+      return NextResponse.json({ error: "No images found" }, { status: 404 });//-
+      return NextResponse.json([]); // Return an empty array instead of a JSON object//+
     }
 
     const images = files.map(file => ({
-      id: file._id.toString(), // Chuyển _id thành string để dễ dùng
+      id: file._id.toString(), // Chuyển _id thành string để dễ dùng//-
       filename: file.filename,
       contentType: file.metadata?.contentType || "image/jpeg",
-      url: `/api/images/${file._id.toString()}`, // Dùng _id thay vì filename
+      url: `/api/images/${file._id.toString()}`, // Dùng _id thay vì filename//-
     }));
 
     return NextResponse.json(images);
