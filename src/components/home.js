@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function BannerSlider() {
   const [index, setIndex] = useState(0);
-  const slides = ["/image/banner.jpg", "/image/banner55.jpg"]; // Danh sách ảnh banner
+  const slides = ["/image/banner.jpg", "/image/banner55.jpg"];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -12,60 +12,46 @@ export default function BannerSlider() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, []);
 
   return (
     <section className="banner">
       {slides.map((src, i) => (
         <div key={i} className={`slide ${i === index ? "active" : "hidden"}`}>
-          <Image 
-            src={src} 
-            alt={`Banner ${i + 1}`} 
-            width={1920}  
-            height={800}  
+          <Image
+            src={src}
+            alt={`Banner ${i + 1}`}
+            width={1920}
+            height={800}
+            priority={i === 0} // Chỉ ưu tiên tải ảnh đầu tiên
             className="banner-image"
           />
           <div className="banner-text">
             <h1>{i === 0 ? "Chào mừng đến với Ăn Vặt 247" : "Hương vị truyền thống, chất lượng hàng đầu"}</h1>
-            <a href="#contact" className="btn">
-              Xem ngay
-            </a>
+            <a href="#contact" className="btn">Xem ngay</a>
           </div>
         </div>
       ))}
       <style jsx>{`
         .banner {
           position: relative;
-          overflow: hidden;
           width: 100%;
-          min-height: 400px; /* Đảm bảo ảnh không bị cắt */
+          min-height: 400px;
         }
-        @media (min-width: 768px) {
-          .banner {
-            min-height: 500px; /* Tăng chiều cao trên tablet */
-          }
-        }
-        @media (min-width: 1024px) {
-          .banner {
-            min-height: 600px; /* Tăng chiều cao trên desktop */
-          }
-        }
+        @media (min-width: 768px) { .banner { min-height: 500px; } }
+        @media (min-width: 1024px) { .banner { min-height: 600px; } }
         .slide {
           display: none;
           position: absolute;
           width: 100%;
           height: 100%;
         }
-        .active {
-          display: block;
-        }
-        .hidden {
-          display: none;
-        }
+        .active { display: block; }
+        .hidden { display: none; }
         .banner-image {
           width: 100%;
           height: 100%;
-          object-fit: cover; /* Đảm bảo ảnh không bị méo */
+          object-fit: cover;
         }
         .banner-text {
           position: absolute;
@@ -87,9 +73,7 @@ export default function BannerSlider() {
           border-radius: 5px;
           transition: background 0.3s;
         }
-        .btn:hover {
-          background: darkred;
-        }
+        .btn:hover { background: darkred; }
       `}</style>
     </section>
   );

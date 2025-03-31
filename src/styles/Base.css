@@ -170,15 +170,24 @@ footer {
     padding-bottom:20px;
 }
 #about {
-    border-radius: 12px ;
+    border-radius: 30px;
+    margin-left: 2.5%;
+    width: 95%;
     background-color: antiquewhite;
 }
 .product-home h3{
     margin-top: 10px ;
 }
 #best-sellers{
-    background-color: #fff;
+    margin-left: 2.5%;
+    width: 95%;
+    border-radius: 30px;
+    margin-top: 30px;
+    background-color: antiquewhite;
 }
 #new-products{
-    background-color: #fff;
+    margin-left: 2.5%;
+    width: 95%;
+    border-radius: 30px;
+    background-color: antiquewhite;
 }
