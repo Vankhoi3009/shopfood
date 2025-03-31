@@ -65,38 +65,47 @@ export default function Header() {
       <style jsx>{`
         header {
           display: flex;
-          flex-direction: row;
           justify-content: space-between;
           align-items: center;
-          padding: 15px;
+          padding: 15px 20px;
           background: #FF4500;
           color: white;
-          position: relative;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
         .logo {
-          font-size: 20px;
+          font-size: 22px;
           font-weight: bold;
         }
         .mobile-menu-icon {
           display: none;
-          font-size: 28px;
+          font-size: 30px;
           cursor: pointer;
-          z-index: 20;
         }
         .nav-links {
           display: flex;
         }
         .nav-links ul {
           display: flex;
-          gap: 15px;
+          gap: 20px;
         }
         .nav-links ul li {
           list-style: none;
         }
+        .nav-links ul li a {
+          color: white;
+          text-decoration: none;
+          font-weight: bold;
+          padding: 10px 15px;
+          transition: background 0.3s, transform 0.2s;
+          border-radius: 5px;
+        }
+        .nav-links ul li a:hover {
+          background: #FF5722;
+          transform: scale(1.05);
+        }
         .account-cart {
           display: flex;
-          gap: 10px;
+          gap: 15px;
           align-items: center;
         }
         .logout-btn {
@@ -106,8 +115,9 @@ export default function Header() {
           border: none;
           cursor: pointer;
           border-radius: 5px;
+          font-weight: bold;
         }
-
+        
         /* Overlay khi menu mobile mở */
         .overlay {
           position: fixed;
@@ -115,7 +125,7 @@ export default function Header() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.5);
+          background: rgba(0, 0, 0, 0.6);
           z-index: 5;
         }
 
@@ -130,13 +140,13 @@ export default function Header() {
             left: -100%;
             width: 80%;
             height: 100vh;
-            background: #ff4500;
+            background: #E64A19; /* Màu cam tối hơn để phân biệt */
             color: white;
             flex-direction: column;
             padding-top: 60px;
             transition: left 0.3s ease-in-out;
             z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
           }
           .nav-links.open {
             left: 0;
@@ -150,6 +160,11 @@ export default function Header() {
             font-size: 18px;
             color: white;
             font-weight: bold;
+            padding: 12px 0;
+          }
+          .nav-links ul li a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
           }
         }
       `}</style>

@@ -52,7 +52,7 @@ export default function Home() {
         <h2>Giới thiệu</h2>
         <p>Ăn Vặt 247 chuyên cung cấp các món ăn vặt ngon, chất lượng.</p>
         <Image 
-          src="/img/gt.jpg" 
+          src="/image/gt.jpg" 
           alt="Mô tả ảnh"
           width={500} 
           height={300} 
