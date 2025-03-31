@@ -48,18 +48,22 @@ export default function Home() {
       <Header />
       <BannerSlider />
 
-      <section id="about">
-        <h2>Giới thiệu</h2>
-        <p>Ăn Vặt 247 chuyên cung cấp các món ăn vặt ngon, chất lượng.</p>
-        <Image 
-          src="/image/gt.jpg" 
-          alt="Mô tả ảnh"
-          width={500} 
-          height={300} 
-          style={{ width: "50%", height: "auto" }}
-        />
+              <section id="about" className="px-4 py-8 md:py-12 lg:py-16 text-center bg-gray-100">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Giới thiệu</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+            Ăn Vặt 247 chuyên cung cấp các món ăn vặt ngon, chất lượng.
+          </p>
+          <div className="flex justify-center">
+            <Image 
+              src="/image/gt.jpg" 
+              alt="Mô tả ảnh"
+              width={500} 
+              height={300} 
+              className="w-3/4 md:w-1/2 lg:w-1/3 rounded-lg shadow-lg"
+            />
+          </div>
+        </section>
 
-      </section>
 
       {/* 🟢 Sản phẩm nổi bật */}
       <section id="new-products">

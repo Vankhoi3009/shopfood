@@ -140,7 +140,7 @@ export default function Header() {
             left: -100%;
             width: 80%;
             height: 100vh;
-            background: #E64A19; /* Màu cam tối hơn để phân biệt */
+            background: #E64A19;
             color: white;
             flex-direction: column;
             padding-top: 60px;
