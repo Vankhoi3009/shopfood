@@ -53,7 +53,7 @@ export default function Home() {
           <p className="text-gray-600 max-w-2xl mx-auto mb-6">
             Ăn Vặt 247 chuyên cung cấp các món ăn vặt ngon, chất lượng.
           </p>
-          <div className="flex justify-center">
+          <div className="img-banner2-home flex justify-center">
             <Image 
               src="/image/gt.jpg" 
               alt="Mô tả ảnh"

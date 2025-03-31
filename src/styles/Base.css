@@ -8,6 +8,8 @@
 }
 
 body {
+    background-color: #d2d2d2;
+    font-family: 'Courier New', Courier, monospace;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -160,4 +162,17 @@ footer {
         justify-content: center !important;
         align-items: center !important;
         padding-bottom: 20px;
+}
+.img-banner2-home img {
+    width: 500px !important;
+}
+.img-banner2-home  {
+    padding-bottom:20px;
+}
+#about {
+    border-radius: 12px ;
+    background-color: antiquewhite;
+}
+.product-home h3{
+    margin-top: 10px ;
 }
