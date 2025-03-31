@@ -40,10 +40,10 @@ export default function Header() {
         <ul>
           <li className="text-link-menu1"><Link href="/" onClick={() => setMenuOpen(false)}>Trang Chủ</Link></li>
           <li className="text-link-menu1"><Link href="/shop1" onClick={() => setMenuOpen(false)}>Đồ ăn vặt</Link></li>
-          <li className="text-link-menu1"><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Đồ ăn đêm</Link></li>
-          <li className="text-link-menu1"><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Đồ uống</Link></li>
-          <li className="text-link-menu1"><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Tin tức</Link></li>
-          <li className="text-link-menu1"><Link href="/#contact" onClick={() => setMenuOpen(false)}>Liên hệ</Link></li>
+          <li className="text-link-menu1"><Link href="/shop1" onClick={() => setMenuOpen(false)}>Đồ ăn đêm</Link></li>
+          <li className="text-link-menu1"><Link href="/shop1" onClick={() => setMenuOpen(false)}>Đồ uống</Link></li>
+          <li className="text-link-menu1"><Link href="/shop1" onClick={() => setMenuOpen(false)}>Tin tức</Link></li>
+          <li className="text-link-menu1"><Link href="/shop1" onClick={() => setMenuOpen(false)}>Liên hệ</Link></li>
         </ul>
       </nav>
 
