@@ -142,3 +142,22 @@ footer {
         margin: 10px 0;
     }
 }
+.text-link-menu1 a {
+    font-weight: 600 !important;
+    }
+.text-link-menu1 a:hover {
+    font-weight: 600 !important;
+    color: rgb(26, 227, 83);
+}
+.nav-links.jsx-7113d70b6a0e142b ul.jsx-7113d70b6a0e142b {
+    gap: 10px !important;
+    display: flex
+;
+}
+.ss-img-moment-home{
+    display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding-bottom: 20px;
+}

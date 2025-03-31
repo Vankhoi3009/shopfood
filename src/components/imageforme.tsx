@@ -13,7 +13,7 @@ const images = [
 
 const ShareMoments = () => {
   return (
-    <section className="py-10 text-center bg-gray-100">
+    <section className="ss-img-moment-home py-10 text-center bg-gray-100">
       <h2 className="text-3xl font-bold text-gray-800">Chia sẻ khoảnh khắc của bạn</h2>
       <p className="text-orange-600 mt-2 max-w-xl mx-auto px-4">
         Hãy lan tỏa những khoảnh khắc truyền cảm hứng của bạn với Ăn vặt 247

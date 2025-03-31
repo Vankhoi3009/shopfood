@@ -38,12 +38,12 @@ export default function Header() {
       {/* Menu chính */}
       <nav className={`nav-links ${menuOpen ? "open" : ""}`}>
         <ul>
-          <li><Link href="/" onClick={() => setMenuOpen(false)}>Trang Chủ</Link></li>
-          <li><Link href="/shop1" onClick={() => setMenuOpen(false)}>Đồ ăn vặt</Link></li>
-          <li><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Đồ ăn đêm</Link></li>
-          <li><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Đồ uống</Link></li>
-          <li><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Tin tức</Link></li>
-          <li><Link href="/#contact" onClick={() => setMenuOpen(false)}>Liên hệ</Link></li>
+          <li className="text-link-menu1"><Link href="/" onClick={() => setMenuOpen(false)}>Trang Chủ</Link></li>
+          <li className="text-link-menu1"><Link href="/shop1" onClick={() => setMenuOpen(false)}>Đồ ăn vặt</Link></li>
+          <li className="text-link-menu1"><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Đồ ăn đêm</Link></li>
+          <li className="text-link-menu1"><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Đồ uống</Link></li>
+          <li className="text-link-menu1"><Link href="/#best-sellers" onClick={() => setMenuOpen(false)}>Tin tức</Link></li>
+          <li className="text-link-menu1"><Link href="/#contact" onClick={() => setMenuOpen(false)}>Liên hệ</Link></li>
         </ul>
       </nav>
 
@@ -155,6 +155,9 @@ export default function Header() {
             flex-direction: column;
             padding: 20px;
             gap: 20px;
+          }
+          .text-link-menu1 a {
+          font-weight: 600 !important;
           }
           .nav-links ul li a {
             font-size: 18px;
